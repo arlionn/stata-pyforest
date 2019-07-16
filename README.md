@@ -57,7 +57,7 @@ gen train = runiform()<0.5
 pyforest iris seplen sepwid petlen petwid, type(classify) training_identifier(train) save_prediction(predicted_iris)
 ```
 
-(Incompelte) internal documentation can be found within Stata -- this documentation is still a work in progress:
+(Incomplete) internal documentation can be found within Stata. This documentation is still a work in progress:
 ```stata
 help pyforest
 ```
