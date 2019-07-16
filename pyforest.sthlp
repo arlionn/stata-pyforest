@@ -16,7 +16,7 @@
 {marker syntax}{title:Syntax}
  
 {p 8 15 2}
-{cmd:pyforest} depvar indepvars {ifin} {weight}, type(string) [{cmd:}{it:options}]
+{cmd:pyforest} depvar indepvars {ifin}, type(string) [{cmd:}{it:options}]
                                
  
 {synoptset 40 tabbed}{...}
@@ -46,7 +46,8 @@
 {synopt :{opt class_weight}}Not yet implemented{p_end}
 
 {syntab :Output options}
-{synopt :{opt save_predictions(varname)}}Saves predictions to {bf: varname}{p_end}
+{synopt :{opt save_predictions(newvar)}}Save prediction as {bf: newvar}{p_end}
+{synopt :{opt save_training(newvar)}}Save indicator for training sample as {bf: newvar}{p_end}
 
 {syntab :Miscellaneous options}
 {synopt :{opt n_jobs}}Number of cores to use when processing data{p_end}
@@ -78,16 +79,27 @@ see {help weight}.
 {phang}
 {opth type(string)} declares whether this is a regression or classification problem. In general, type(classify) is more appropriate when the dependent variable is categorical, and type(regression) is more appropriate when the dependent variable is continuous.
  
+{dlgtab:Training data options}
+ 
+{phang}
+{opt frac_training(float)} determines the fraction of observations to be randomly sampled for the training dataset. Note that frac_training should be in (0,1]. By default, this is 0.5.
+
+{phang}
+{opt training_stratify(varname)} identifies a variable for the level at which the training data is subsampled from. 
+
+{phang}
+{opt training_identifier(varname)} identifies an indicator variable in the current dataset that is equal to 1 when an observation should be used for training and 0 otherwise. If this option is specified, frac_training() and training_stratify() are ignored.
+
 {dlgtab:Random forest options}
  
 {phang}
-{opt n_estimators(integer)} determines the number of trees used. In general, a higher number is better. The default is n_estimators(100).
+{opt n_estimators(integer)} determines the number of trees used. In general, more is better. The default is n_estimators(100).
 
 {phang}
 {opt criterion(string)} determines the function used to measure the quality of a proposed split. Valid options for criterion() depend on whether the task is a classification task or a regression task. If type(regress) is specified, valid options are mse (default) and mae. If type(classify) is specified, valid options are gini (default) and entropy. 
 
 {phang}
-{opt max_depth(integer)} specifies the maximum tree depth. By default, this is None, meaning this constraint never binds.
+{opt max_depth(integer)} specifies the maximum tree depth. By default, this is None.
 
 {phang}
 {opt min_samples_split(integer)} specifies the minimum number of observations required to consider splitting an internal node of a tree. By default, this is 2.
@@ -102,23 +114,35 @@ see {help weight}.
 {opt max_features(string)} specifies the number of features to consider when looking for the best split. By default, this is equal to the number of features (aka independent variables). Other options are max_features(sqrt) (the square root of the number of features), max_features(log2) (the base-2 logarithm of the number of features), an integer, or a float. If a non-integer is specified, then int(max_features,number of features) are considered at each split.
 
 {phang}
-{opt max_leaf_nodes(int)} Grow trees with max_leaf_nodes in best-first fashion, where best is defined in terms of relative reduction in impurity. By default, an unlimited number of leaf nodes. 
+{opt max_leaf_nodes(integer)} Grow trees with max_leaf_nodes in best-first fashion, where best is defined in terms of relative reduction in impurity. By default, an unlimited number of leaf nodes. 
 
 {phang}
 {opt min_impurity_decrease(float)} determines the threshold such tha a node is split if it induces a decrease in impurity criterion greater than or equal to this value. By default, this is 0. 
 
 {phang}
-{opt nobootstrap} determines whether bootstrapped samples are used when building trees. If this option is specified, no bootstrapped samples are used, i.e. the whole dataset is used for each tree. By default, bootstrapped samples are used.
+{opt nobootstrap} determines whether bootstrapped samples are used when building trees. If this option is specified, no bootstrapped samples are used, i.e. the whole dataset is used for each tree. By default, each tree uses data that is bootstrapped with replacement (same # of obs) from the original data.
 
 {dlgtab:Save Output}
  
 {phang}
-{opt save(filename)} saves the output dataset to a dataset specified by {it:filename}. If a full file path is not provided, the working directory used. If no file extension is specified, .dta is assumed.
+{opt save_prediction(newvar)} specifies a new variable name for storing predicted outcomes. By default, _rf_prediction is used. The prediction is populated for both the training and validation subsamples.
+{opt save_training(varname)} species the variable name for an indicator denoting whether an observation is in the training data or not. By default, _rf_prediction is used.
+
+{phang}
+{opt save_training(newvar)} specifies a new variable name for storing an indicator variable for whether an observation is in the training dataset.  If training_identifier() is used, this option does nothing, since training_identifier() points to a pre-existing variable.
 
 {marker examples}{...}
 {title:Examples}
  
 {pstd}See the Github page.{p_end}
+
+{pstd}Example 1: Classification with random forests{p_end}
+{phang2}. {stata sysuse iris, clear}{p_end}
+{phang2}. {stata pyforest iris seplen sepwid petlen petwid, type(classify) save_prediction(iris_predicted)}{p_end}
+
+{pstd}Example 2: Classification with random forests, more options{p_end}
+{phang2}. {stata sysuse iris, clear}{p_end}
+{phang2}. {stata pyforest iris seplen sepwid petlen petwid, type(classify) frac_training(0.3) save_prediction(iris_predicted) save_training(training_sample) criterion(entropy)}{p_end}
  
 {marker author}{...}
 {title:Author}
@@ -133,4 +157,11 @@ see {help weight}.
 
 {pstd}This program obviously owes a lot to the wonderful scikit-learn library in Python.
 {pstd}Read more about scikit-learn here: https://scikit-learn.org
+
+
+{marker acknowledgements}{...}
+{title:References}
+
+{pstd}xx
+
  

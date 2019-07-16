@@ -12,31 +12,31 @@
 program define pyforest, eclass
 version 16.0
 syntax varlist(min=2) [if] [in] [aweight fweight], ///
-	[ ///
-		type(string asis)            /// random forest type: classifier or regressor
-		n_estimators(integer 100) 	 /// number of trees
-		criterion(string asis) 	 	 /// split criterion (gini, entropy)
-		max_depth 				 	 /// max tree depth
-		min_samples_split 		 	 /// min obs before splitting internal node
-		min_samples_leaf 		 	 /// min obs required at a leaf node
-		min_weight_fraction_leaf 	 /// min weighted frac of sum of total weights
-		max_features 			 	 /// number of features to consider for best split
-		max_leaf_nodes 			 	 /// max leaf nodes
-		min_impurity_decrease 	 	 /// split if it induces this amt decrease in impurity
-		bootstrap 		 		 	 /// use bootstrap or not
-		oob_score 		 		 	 /// whether to use out-of-bag obs to estimate generalization accuracy
-		n_jobs(integer -1)		 	 /// number of processors to use when computing stuff - default is all
-		random_state(integer -1) 	 /// seed used by random number generator
-		verbose		 			 	 /// controls verbosity
-		warm_start(string asis)	 	 /// when set to true, reuse solution of previous call to fit
-		class_weight 			 	 /// None, optional
-	    frac_training(real 0.5)	 	 /// randomly assign fraction X to training
-	    training_stratify 		 	 /// if nonmissing, randomize at this level
-	    training_identifier(varname numeric) /// training dataset identifier
-		save_prediction(string asis) /// variable name to save predictions
-		save_training(string asis) 	 /// variable name to save training flag
-		standardize                  ///
-	]
+[ ///
+	type(string asis)            	 /// random forest type: classifier or regressor
+	n_estimators(integer 100) 	 	 /// number of trees
+	criterion(string asis) 	 	 	 /// split criterion (gini, entropy)
+	max_depth(integer -1)	 	 	 /// max tree depth
+	min_samples_split(real 2) 	 	 /// min obs before splitting internal node
+	min_samples_leaf(real 1) 	 	 /// min obs required at a leaf node
+	min_weight_fraction_leaf(real 0) /// min weighted frac of sum of total weights
+	max_features(string asis)	 	 /// number of features to consider for best split
+	max_leaf_nodes(real -1)	 	 	 /// max leaf nodes
+	min_impurity_decrease(real 0)	 /// split if it induces this amt decrease in impurity
+	nobootstrap 		 		 	 /// use bootstrap or not
+	oob_score 		 		 	 	 /// whether to use out-of-bag obs to estimate generalization accuracy
+	n_jobs(integer -1)		 	 	 /// number of processors to use when computing stuff - default is all
+	random_state(integer -1) 	 	 /// seed used by random number generator
+	verbose		 			 	 	 /// controls verbosity
+	warm_start(string asis)	 	 	 /// when set to true, reuse solution of previous call to fit
+	class_weight 			 	 	 /// XX NOT YET IMPLEMENTED
+    frac_training(real 0.5)	 	 	 /// randomly assign fraction X to training
+    training_stratify 		 	 	 /// if nonmissing, randomize at this level
+    training_identifier(varname) 	 /// training dataset identifier
+	save_prediction(string asis) 	 /// variable name to save predictions
+	save_training(string asis) 	 	 /// variable name to save training flag
+	standardize                  	 /// standardize features XX NOT YET IMPLEMENTED
+]
 
 
 *-------------------------------------------------------------------------------
@@ -67,10 +67,8 @@ if ~inlist("`type'","classify","regress") {
 
 *--------------
 * criterion option: different for classifier or regressor
-*   if regressor: use mse, mae criterion (default mse)
-*   if classifier: use gini, entropy (default gini)
 if "`type'"=="classify" & "`criterion'"=="" local criterion "gini"
-if "`type'"=="regress" & "`criterion'"=="" local criterion "mse"
+if "`type'"=="regress"  & "`criterion'"=="" local criterion "mse"
 if "`type'"=="classify" {
 	if ~inlist("`criterion'","gini","entropy") {
 		di as error "Syntax error: with type(`type'), criterion() must be 'gini' or 'entropy' (was `criterion')"
@@ -86,7 +84,7 @@ if "`type"=="regress" {
 
 *--------------
 * max_depth: positive integer (default: None)
-if "`max_depth'"=="" local max_depth None
+if "`max_depth'"=="-1" local max_depth None
 if "`max_depth'"!="None" {
 	if `max_depth'<1 {
 		di as error "Syntax error: max_depth() must be positive integer (was `max_depth')"
@@ -109,23 +107,44 @@ if "`min_weight_fraction_leaf'"=="" local min_weight_fraction_leaf 0
 *--------------
 * max_features 
 * int, float, string, or None, optional (default: "auto")
-if "`max_features'"=="" local max_features auto
+if "`max_features'"=="" local max_features "auto"
 * if not sqrt or log2, then should be float
-if ~inlist("`max_features'","sqrt","log2") {
+if ~inlist("`max_features'","auto","sqrt","log2") {
 	* check to make sure float
-	qui di "xx"
+	cap confirm number `max_features'
+	if _rc>0 {
+		di as error "Syntax error: max_features() should be either 'auto', 'sqrt', 'log2', or an integer/float (was `max_features')"
+		exit 1
+	}
+	if _rc==0 {
+		* xx need to apply ceil thing here
+	}
+}
+else {
+	local max_features `""`max_features'""'
 }
 
 *--------------
-if "`max_leaf_nodes'"=="" local max_leaf_nodes None
+* max_leaf_nodes: xx test me
+if "`max_leaf_nodes'"=="-1" local max_leaf_nodes None
+if "`max_leaf_nodes'"!="None" {
+	if `max_leaf_nodes'<1 {
+		di as error "Syntax error: if you specify max_leaf_nodes(), make it a positive integer (was `max_leaf_nodes')"
+		exit 1
+	}
+}
 
 *--------------
+* min_impurity_decrease: xx test me
 if "`min_impurity_decrease'"=="" local min_impurity_decrease 0
 
 *--------------
-if "`bootstrap'"=="" local bootstrap True
+* nobootstrap: whether or not to bootstrap samples in each tree
+if "`nobootstrap'"=="" local bootstrap True
+if "`nobootstrap'"!="" local bootstrap False
 
 *--------------
+* oob_score: xx not yet implemented
 if "`oob_score'"=="" local oob_score False
 
 *--------------
@@ -137,7 +156,6 @@ if `n_jobs'<1 & `n_jobs'!=-1 {
 	di as error " If not -1, this has to be a positive integer. But you should probably not mess around with this."
 	exit 1
 }
-
 
 *--------------
 * random_state: initialize random number generator
@@ -159,6 +177,7 @@ if "`verbose'"=="" local verbose 0
 if "`warm_start'"=="" local warm_start False
 
 *--------------
+* class_weight: xx not yet implemented
 if "`class_weight'"=="" local class_weight None
 
 *--------------
@@ -179,7 +198,9 @@ if _rc>7 {
 
 *--------------
 * training dataset indicator cant already be a variable name
-if "`save_training'"=="" local save_training _rf_training
+if "`save_training'"=="" {
+	local save_training _rf_training
+}
 capture confirm new variable `save_training'
 if _rc>7 {
 	di as error "Error: save_training() cannot specify an existing variable (`save_training' already exists)"
@@ -192,7 +213,8 @@ if _rc>7 {
 
 * generate an index of original data so we can easily merge back on the results
 *  xx there is probably a better way to do this... feels inefficient
-gen ____rf_index = _n
+tempvar index
+gen `index' = _n
 
 * preserve original data
 preserve
@@ -226,123 +248,78 @@ if "`training_identifier'"=="" {
 	gen `save_training' = runiform()<`frac_training'
 }
 
-*-------------------------------------------------------------------------------
-* If type(regress), run random forest regression
-*-------------------------------------------------------------------------------
-
-if "`type'"=="regress" {
-
-	* Display some info about options
-	di "{hline 80}"
-	di "Random forest regression"
-	di as text "  Variable to classify:	      `yvar'"
-	di as text "  Features:                   `xvars'"
-	di as text "  Observations:               `nobs_train' training, `nobs_test' validation"
-	di "Random forest options"
-	di as text "  Number of trees:            `n_estimators' (bootstrap: `bootstrap')"
-	di as text "  Max tree depth:             `max_depth'"
-	di as text "  Max features:               `max_features'"
-	di as text "  Max leaf nodes:             `max_leaf_nodes'"
-	di as text "  Splitting criterion:        `criterion'"
-	di as text "  Min obs at internal nodes:  `min_samples_split'"
-	di as text "  Min. weight fraction leaf:  `min_weight_fraction_leaf'"
-	di as text "  Min impurity decrease:      `min_impurity_decrease'"
-	di as text "  OOB score:                  `oob_score'"
-	di "Output"
-	di as text "  Predictions saved as:       `save_prediction'"
-	di as text "Questions? Type {stata help pyforest}, or read the scikit-learn documentation."
-	di "{hline 80}"
-
-	* Pass options to Python to import data, run random forest regression, return results
-	python: run_random_forest("regress", ///
-						   "`save_training' `yvar' `xvars'", ///
-						   `n_estimators', ///
-						   "`criterion'", ///
-						   `max_depth', ///
-						   `min_samples_split', ///
-						   `min_samples_leaf', ///
-						   `min_weight_fraction_leaf', ///
-						   "`max_features'", ///
-						   `max_leaf_nodes', ///
-						   `min_impurity_decrease', ///
-						   `bootstrap', ///
-						   `oob_score', ///
-						   `n_jobs', ///
-						   `random_state', ///
-						   `verbose', ///
-						   `warm_start', ///
-						   `class_weight', ///
-						   "`save_prediction'", ///
-						   "`save_training'")
-
-}
+* Get number of obs in train and validate samples
+qui count if `save_training'==1
+local num_obs_train = `r(N)'
+qui count
+local num_obs_val = `r(N)' - `num_obs_train'
 
 *-------------------------------------------------------------------------------
-* If type(classify), run random forest classifier
+* Format strings and display text box
 *-------------------------------------------------------------------------------
 
-if "`type'"=="classify" {
+* Store a macro to slightly change results table
+if "`type'"=="regress" local type_str "regression"
+if "`type'"=="classify" local type_str "classification"
 
-	* Display some info about options
-	di "{hline 80}"
-	di "Random forest classification"
-	di as text "  Variable to classify:	      `yvar'"
-	di as text "  Features:                   `xvars'"
-	di as text "  Observations:               `nobs_train' training, `nobs_test' validation"
-	di "Random forest options"
-	di as text "  Number of trees:            `n_estimators' (bootstrap: `bootstrap')"
-	di as text "  Max tree depth:             `max_depth'"
-	di as text "  Max features:               `max_features'"
-	di as text "  Max leaf nodes:             `max_leaf_nodes'"
-	di as text "  Splitting criterion:        `criterion'"
-	di as text "  Min obs at internal nodes:  `min_samples_split'"
-	di as text "  Min. weight fraction leaf:  `min_weight_fraction_leaf'"
-	di as text "  Min impurity decrease:      `min_impurity_decrease'"
-	di as text "  OOB score:                  `oob_score'"
-	di "Output"
-	di as text "  Predictions saved as:       `save_prediction'"
-	di as text "Questions? Type {stata help pyforests}, or read the scikit-learn documentation."
-	di "{hline 80}"
+* Display some info about options
+di "{hline 80}"
+di in ye "Random forest `type_str'"
+di in gr "Dependent variable: `yvar'" _continue
+di in gr _col(52) "Num. training obs   = " in ye `num_obs_train'
+di in gr "Features: `xvars'" _continue
+di in gr _col(52) "Num. validation obs = " in ye `num_obs_val'
+di in gr "Number of trees: " in ye "`n_estimators'"
+di in gr "Max tree depth: " in ye "`max_depth'"
+di in gr "Max features: " in ye `max_features'
+di in gr "Max leaf nodes: " in ye "`max_leaf_nodes'"
+di in gr "Min obs at each leaf: " in ye "`min_samples_leaf'"
+di in gr "Min obs at internal nodes: " in ye "`min_samples_split'"
+di in gr "Min weight fraction leaf " in ye "`min_weight_fraction_leaf'"
+di in gr "Splitting criterion: " in ye "`criterion'"
+di in gr "Min impurity decrease: " in ye "`min_impurity_decrease'"
+di in gr "Saved prediction: " in ye "`save_prediction'"
+di as text "Questions? Type {stata help pyforest}, or read the scikit-learn documentation."
+di "{hline 80}"
 
-	* Pass options to Python to import data, run random forest regression, return results
-	python: run_random_forest("classify", ///
-						   "`save_training' `yvar2' `xvars'", ///
-						   `n_estimators', ///
-						   "`criterion'", ///
-						   `max_depth', ///
-						   `min_samples_split', ///
-						   `min_samples_leaf', ///
-						   `min_weight_fraction_leaf', ///
-						   "`max_features'", ///
-						   `max_leaf_nodes', ///
-						   `min_impurity_decrease', ///
-						   `bootstrap', ///
-						   `oob_score', ///
-						   `n_jobs', ///
-						   `random_state', ///
-						   `verbose', ///
-						   `warm_start', ///
-						   `class_weight', ///
-						   "`save_prediction'", ///
-						   "`save_training'")
-
-}
+* Pass options to Python to import data, run random forest regression, return results
+python: run_random_forest( ///
+	"`type'", ///
+	"`save_training' `yvar2' `xvars'", ///
+	`n_estimators', ///
+	"`criterion'", ///
+	`max_depth', ///
+	`min_samples_split', ///
+	`min_samples_leaf', ///
+	`min_weight_fraction_leaf', ///
+	`max_features', ///
+	`max_leaf_nodes', ///
+	`min_impurity_decrease', ///
+	`bootstrap', ///
+	`oob_score', ///
+	`n_jobs', ///
+	`random_state', ///
+	`verbose', ///
+	`warm_start', ///
+	`class_weight', ///
+	"`save_prediction'", ///
+	"`save_training'")
 
 *-------------------------------------------------------------------------------
 * Clean up before ending Stata script
 *-------------------------------------------------------------------------------
 
 * keep only index and new data
-keep ____rf_index `save_prediction' `save_training'
+keep `index' `save_prediction' `save_training'
 tempfile t1
 qui save `t1'
 restore
-qui merge 1:1 ____rf_index using `t1', nogen
-drop ____rf_index
+qui merge 1:1 `index' using `t1', nogen
+drop `index'
 
 * If save training was specified, delete temporary save_training var
 if "`save_training'"!="" {
-	drop `save_training'
+	*drop `save_training'
 }
 
 * If y needed encoding, decode

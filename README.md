@@ -44,7 +44,7 @@ net install pyforest, from(https://raw.githubusercontent.com/mdroste/stata-pyfor
 Usage
 ---------------------------------
 
-Basic usage of pyforest is simple. 
+Basic usage of pyforest is pretty simple. The syntax looks similar to -regress-. Optional arguments share exactly the same syntax as (scikit-learn.ensemble.RandomForestClassifier)[https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html] and (scikit-learn.ensemble.RandomForestRegressor)[https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html].
 
 Here is a quick example demonstrating how to use pyforest for classification:
 
