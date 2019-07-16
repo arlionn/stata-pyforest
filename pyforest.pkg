@@ -1,0 +1,8 @@
+v 0.1
+d
+d 'pyforest': random forests in stata
+d
+d Distribution-Date: 20190716
+d
+f pyforest.ado
+f pyforest.sthlp
