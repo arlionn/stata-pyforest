@@ -44,17 +44,32 @@ net install pyforest, from(https://raw.githubusercontent.com/mdroste/stata-pyfor
 Usage
 ---------------------------------
 
-Basic usage of pyforest is simple. Here is a quick example demonstrating how to use pyforest for classification:
+Basic usage of pyforest is simple. 
+
+Here is a quick example demonstrating how to use pyforest for classification:
 
 ```stata
 * load dataset of flowers
 use http://www.stata-press.com/data/r10/iris.dta, clear
 
-* keep half of the dataset as training and half to test
+* mark approx half of the dataset for estimation
 gen train = runiform()<0.5
 
 * run random forest classification, save predictions as predicted_iris
 pyforest iris seplen sepwid petlen petwid, type(classify) training_identifier(train) save_prediction(predicted_iris)
+```
+
+Here is a quick example demonstrating how to use pyforest for regression:
+
+```stata
+* load dataset of cars
+sysuse auto, clear
+
+* mark approx 30% of obs for estimation
+gen train = runiform()<0.3
+
+* run random forest regression, save predictions as predicted_price
+pyforest price mpg trunk weight, type(regress) training_identifier(train) save_prediction(predicted_price)
 ```
 
 (Incomplete) internal documentation can be found within Stata. This documentation is still a work in progress:
