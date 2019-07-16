@@ -24,7 +24,7 @@ pyforest is an implementation of the random forest algorithm in Stata 16 for cla
 Prequisites
 ---------------------------------
 
-pyforest requires Stata version 16 or higher, since it relies on the Python integration introduced in Stata 16.0. It also requires Python 3.x and the scikit-learn library. For more information on installing Python or scikit-learn, refer to their websites here:
+pyforest requires Stata version 16 or higher, since it relies on the Python integration introduced in Stata 16.0. It also requires Python 3.x and the scikit-learn library. If you have not installed Python or scikit-learn, I would highly recommend starting with the (Anaconda distribution)[https://docs.anaconda.com/anaconda/]
 
 
 Installation
@@ -38,13 +38,13 @@ There are two options for installing pyforest.
 net install pyforest, from(https://raw.githubusercontent.com/mdroste/stata-pyforest/master/)
 ```
 
-2. A ZIP containing the program can be downloaded and manually placed on the user's adopath from Github.
+2. A ZIP containing pyforest.ado and pyforest.sthlp can be downloaded from Github and manually placed on the user's adopath.
 
 
 Usage
 ---------------------------------
 
-Basic usage of pyforest is simple. Here's an example of random forest classification:
+Basic usage of pyforest is simple. Here is a quick example demonstrating how to use pyforest for classification:
 
 ```stata
 * load dataset of flowers
@@ -57,10 +57,12 @@ gen train = runiform()<0.5
 pyforest iris seplen sepwid petlen petwid, type(classify) training_identifier(train) save_prediction(predicted_iris)
 ```
 
-Complete internal documentation can also be found within Stata:
+(Incompelte) internal documentation can be found within Stata -- this documentation is still a work in progress:
 ```stata
 help pyforest
 ```
+
+Finally, since the option syntax in this package is inherited from scikit-learn, the documentation for the scikit methods sklearn.ensemble.randomForestClassification and sklearn.ensemble.randomForestRegression may be useful. 
 
   
 Todo
