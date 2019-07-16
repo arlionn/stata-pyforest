@@ -12,7 +12,7 @@ pyforest
 
 Regression and classification with random forests in Stata
 
-`version 0.1 16jul2019`
+`version 0.11 16jul2019`
 
 
 Overview

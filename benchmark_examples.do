@@ -9,7 +9,7 @@
 
 * preliminary - install latest version of pyforest
 cap program drop pyforest
-net install pyforest, from(https://raw.githubusercontent.com/mdroste/stata-pyforest/master/) force replace
+net install pyforest, from("https://raw.githubusercontent.com/mdroste/stata-pyforest/master/") force replace
 
 *-------------------------------------------------------------------------------
 * Basic usage examples
@@ -71,7 +71,6 @@ pyforest price mpg foreign trunk, type(regress) min_weight_fraction_leaf(0.1)
 * option: max_features()
 sysuse auto, clear
 pyforest price mpg foreign trunk, type(regress) max_features(log2)
-
 sysuse auto, clear
 pyforest price mpg foreign trunk, type(regress) max_features(2)
 

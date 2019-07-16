@@ -4,8 +4,8 @@
 *          with scikit-learn in Python, using Stata 16's new built-in Python
 *          integration functions.
 * More info: www.github.com/mdroste/stata-pyforests
-* Version: 0.1
-* Date: July 15, 2019
+* Version: 0.11
+* Date: July 16, 2019
 * Author: Michael Droste
 *===============================================================================
 
@@ -207,6 +207,11 @@ if _rc>7 {
 	exit 1
 }
 
+*--------------
+* feature importance
+local importance 0
+if "`feature_importance'"!="" local importance 1
+
 *-------------------------------------------------------------------------------
 * Manipulate data
 *-------------------------------------------------------------------------------
@@ -303,7 +308,8 @@ python: run_random_forest( ///
 	`warm_start', ///
 	`class_weight', ///
 	"`save_prediction'", ///
-	"`save_training'")
+	"`save_training'", ///
+	`importance')
 
 *-------------------------------------------------------------------------------
 * Clean up before ending Stata script
@@ -333,6 +339,13 @@ if "`needs_encoding'"=="yes" {
 	rename `save_prediction'_2 `save_prediction'
 }
 
+*-------------------------------------------------------------------------------
+* Finally: send stuff out to e() class
+*-------------------------------------------------------------------------------
+
+* Return importance
+ereturn matrix importance = temp1
+
 end
 
 *-------------------------------------------------------------------------------
@@ -348,12 +361,13 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import RandomForestRegressor
 from sfi import Data
+from sfi import Matrix
 
 #------------------------------------------------------
 # Define function: run_random_forests_regressor
 #------------------------------------------------------
 
-def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_split,min_samples_leaf,min_weight_fraction_leaf,max_features,max_leaf_nodes,min_impurity_decrease,bootstrap,oob_score,n_jobs,random_state,verbose,warm_start,class_weight,prediction,training):
+def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_split,min_samples_leaf,min_weight_fraction_leaf,max_features,max_leaf_nodes,min_impurity_decrease,bootstrap,oob_score,n_jobs,random_state,verbose,warm_start,class_weight,prediction,training,importance):
 
 	# Load data into data frame
 	df = pd.DataFrame(Data.get(vars))
@@ -379,12 +393,25 @@ def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_spl
     # Run random forest regressor on training data
 	rf.fit(df_train[features], df_train[y])
 
-    # Run random forest regressor on test data
+	# Generate predictions (on both training and test data)
 	pred    = rf.predict(df[features])
 
-	# Export predictions to stata
+	# Export predictions to Stata
    	Data.addVarFloat(prediction)
-
 	Data.store(prediction,None,pred)
+
+	# If applicable, display feature importance
+	feature_importances = pd.DataFrame(rf.feature_importances_,
+										index = features,
+										columns=['importance']).sort_values('importance', ascending=False)
+	z = feature_importances.shape
+	importance = list(rf.feature_importances_)
+	Matrix.create("importance", z[0], z[1], -1)
+	Matrix.setColNames("importance",['importance'])
+	Matrix.setRowNames("importance",list(features.values))
+	print(importance[0])
+	for i in range(z[0]):
+		print(i)
+		Matrix.storeAt("importance",i,0,importance[i])
 
 end
