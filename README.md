@@ -44,15 +44,23 @@ net install pyforest, from(https://raw.githubusercontent.com/mdroste/stata-pyfor
 Usage
 ---------------------------------
 
-Basic usage of pyforest can be performed out of the box. The following command will predict the variable price using mpg, weight, and headroom and save predictions as the variable price_hat_rf, using only observations where train = 1. 
+Basic usage of pyforest is simple. Here's an example of random forest classification:
 
 ```stata
-sysuse auto, clear
+* load dataset of flowers
+use http://www.stata-press.com/data/r10/iris.dta, clear
+
+* keep half of the dataset as training and half to test
 gen train = runiform()<0.5
-pyforest price mpg weight headroom, type(regress) save_predictions(price_hat_rf) training_identifier(train)
+
+* run random forest classification, save predictions as predicted_iris
+pyforest iris seplen sepwid petlen petwid, type(classify) training_identifier(train) save_prediction(predicted_iris)
 ```
 
-More on this soon. See the help file in Stata.
+Complete internal documentation can also be found within Stata:
+```stata
+help pyforest
+```
 
   
 Todo
