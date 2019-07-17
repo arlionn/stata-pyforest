@@ -27,21 +27,19 @@
 {synopt :{opt type(string)}}{it:string} may be {bf:regress} or {bf:classify}.{p_end}
 
 {syntab :Training options}
-{synopt :{opt frac_training(numeric)}}fraction of observations to place in training dataset{p_end}
+{synopt :{opt frac_training(#)}}fraction of observations to place in training dataset{p_end}
 {synopt :{opt training_identifier(varname)}}Use varname as indicator for training sample{p_end}
-{synopt :{opt training_stratify(varname)}}Stratify random sample according to varname{p_end}
  
 {syntab :Random forest options}
-{synopt :{opt n_estimators(integer)}}Number of trees{p_end}
+{synopt :{opt n_estimators(#)}}Number of trees{p_end}
 {synopt :{opt criterion(string)}}Criterion for splitting nodes (see details below){p_end}
-{synopt :{opt max_depth(numeric)}}Maximum tree depth{p_end}
-{synopt :{opt min_samples_split(numeric)}}Minimum observations per node{p_end}
-{synopt :{opt min_weight_fraction_leaf(numeric)}}xx{p_end}
+{synopt :{opt max_depth(#)}}Maximum tree depth{p_end}
+{synopt :{opt min_samples_split(#)}}Minimum observations per node{p_end}
+{synopt :{opt min_weight_fraction_leaf(#)}}xx{p_end}
 {synopt :{opt max_features(numeric)}}Maximum number of features to consider per tree{p_end}
-{synopt :{opt max_leaf_nodes(numeric)}}Maximum leaf nodes{p_end}
-{synopt :{opt min_impurity_decrease(numeric)}}Propensity to split{p_end}
+{synopt :{opt max_leaf_nodes(#)}}Maximum leaf nodes{p_end}
+{synopt :{opt min_impurity_decrease(#)}}Propensity to split{p_end}
 {synopt :{opt nobootstrap}}Do not bootstrap observations for each tree{p_end}
-{synopt :{opt oob_score}}Whether to use out-of-bag obs. to est. generalization accuracy{p_end}
 {synopt :{opt verbose}}Controls verbosity of output{p_end}
 {synopt :{opt class_weight}}Not yet implemented{p_end}
 
@@ -50,7 +48,7 @@
 {synopt :{opt save_training(newvar)}}Save indicator for training sample as {bf: newvar}{p_end}
 
 {syntab :Miscellaneous options}
-{synopt :{opt n_jobs}}Number of cores to use when processing data{p_end}
+{synopt :{opt n_jobs(#)}}Number of cores to use when processing data{p_end}
 
 {synoptline}
 {p 4 6 2}
@@ -93,31 +91,31 @@ see {help weight}.
 {dlgtab:Random forest options}
  
 {phang}
-{opt n_estimators(integer)} determines the number of trees used. In general, more is better. The default is n_estimators(100).
+{opt n_estimators(#)} determines the number of trees used. In general, more is better. The default is n_estimators(100).
 
 {phang}
 {opt criterion(string)} determines the function used to measure the quality of a proposed split. Valid options for criterion() depend on whether the task is a classification task or a regression task. If type(regress) is specified, valid options are mse (default) and mae. If type(classify) is specified, valid options are gini (default) and entropy. 
 
 {phang}
-{opt max_depth(integer)} specifies the maximum tree depth. By default, this is None.
+{opt max_depth(#)} specifies the maximum tree depth. By default, this is None.
 
 {phang}
-{opt min_samples_split(integer)} specifies the minimum number of observations required to consider splitting an internal node of a tree. By default, this is 2.
+{opt min_samples_split(#)} specifies the minimum number of observations required to consider splitting an internal node of a tree. By default, this is 2.
 
 {phang}
-{opt min_samples_leaf(integer)} specifies the minimum number of observations required at each 'leaf' node of a tree. By default, this is 1.
+{opt min_samples_leaf(#)} specifies the minimum number of observations required at each 'leaf' node of a tree. By default, this is 1.
 
 {phang}
-{opt min_weight_fraction_leaf(integer)} specifies the minimum weighted fraction of the sum of weights required at each leaf node. When weights are not specified, this is simply the minimum fraction of observations required at each leaf node. By default, this is 0.
+{opt min_weight_fraction_leaf(#)} specifies the minimum weighted fraction of the sum of weights required at each leaf node. When weights are not specified, this is simply the minimum fraction of observations required at each leaf node. By default, this is 0.
 
 {phang}
 {opt max_features(string)} specifies the number of features to consider when looking for the best split. By default, this is equal to the number of features (aka independent variables). Other options are max_features(sqrt) (the square root of the number of features), max_features(log2) (the base-2 logarithm of the number of features), an integer, or a float. If a non-integer is specified, then int(max_features,number of features) are considered at each split.
 
 {phang}
-{opt max_leaf_nodes(integer)} Grow trees with max_leaf_nodes in best-first fashion, where best is defined in terms of relative reduction in impurity. By default, an unlimited number of leaf nodes. 
+{opt max_leaf_nodes(#)} Grow trees with max_leaf_nodes in best-first fashion, where best is defined in terms of relative reduction in impurity. By default, an unlimited number of leaf nodes. 
 
 {phang}
-{opt min_impurity_decrease(float)} determines the threshold such tha a node is split if it induces a decrease in impurity criterion greater than or equal to this value. By default, this is 0. 
+{opt min_impurity_decrease(#)} determines the threshold such tha a node is split if it induces a decrease in impurity criterion greater than or equal to this value. By default, this is 0. 
 
 {phang}
 {opt nobootstrap} determines whether bootstrapped samples are used when building trees. If this option is specified, no bootstrapped samples are used, i.e. the whole dataset is used for each tree. By default, each tree uses data that is bootstrapped with replacement (same # of obs) from the original data.
@@ -155,13 +153,7 @@ see {help weight}.
 {marker acknowledgements}{...}
 {title:Acknowledgements}
 
-{pstd}This program obviously owes a lot to the wonderful scikit-learn library in Python.
+{pstd}This program owes a lot to the wonderful scikit-learn library in Python.
 {pstd}Read more about scikit-learn here: https://scikit-learn.org
 
 
-{marker acknowledgements}{...}
-{title:References}
-
-{pstd}xx
-
- 

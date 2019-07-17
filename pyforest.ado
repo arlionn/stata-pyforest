@@ -284,7 +284,6 @@ di in gr "Min weight fraction leaf " in ye "`min_weight_fraction_leaf'"
 di in gr "Splitting criterion: " in ye "`criterion'"
 di in gr "Min impurity decrease: " in ye "`min_impurity_decrease'"
 di in gr "Saved prediction: " in ye "`save_prediction'"
-di as text "Questions? Type {stata help pyforest}, or read the scikit-learn documentation."
 di "{hline 80}"
 
 * Pass options to Python to import data, run random forest regression, return results

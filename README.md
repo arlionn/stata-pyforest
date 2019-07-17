@@ -24,7 +24,7 @@ pyforest is an implementation of the random forest algorithm in Stata 16 for cla
 Prequisites
 ---------------------------------
 
-pyforest requires Stata version 16 or higher, since it relies on the Python integration introduced in Stata 16.0. It also requires Python 3.x and the scikit-learn library. If you have not installed Python or scikit-learn, I would highly recommend starting with the (Anaconda distribution)[https://docs.anaconda.com/anaconda/]
+pyforest requires Stata version 16 or higher, since it relies on the Python integration introduced in Stata 16.0. It also requires Python 3.x and the scikit-learn library. If you have not installed Python or scikit-learn, I would highly recommend starting with the [Anaconda distribution](https://docs.anaconda.com/anaconda).
 
 
 Installation
@@ -44,7 +44,7 @@ net install pyforest, from(https://raw.githubusercontent.com/mdroste/stata-pyfor
 Usage
 ---------------------------------
 
-Basic usage of pyforest is pretty simple. The syntax looks similar to -regress-. Optional arguments share exactly the same syntax as (scikit-learn.ensemble.RandomForestClassifier)[https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html] and (scikit-learn.ensemble.RandomForestRegressor)[https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html].
+Basic usage of pyforest is pretty simple. The syntax looks similar to -regress-. Optional arguments share exactly the same syntax as [scikit-learn.ensemble.RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) and [scikit-learn.ensemble.RandomForestRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html).
 
 Here is a quick example demonstrating how to use pyforest for classification:
 
