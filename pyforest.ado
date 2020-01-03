@@ -1,12 +1,12 @@
 *===============================================================================
-* Program: pyforest.ado
-* Purpose: Stata wrapper for random forest classification and regression
-*          with scikit-learn in Python, using Stata 16's new built-in Python
-*          integration functions.
+* Program:   pyforest.ado
+* Purpose:   Stata wrapper for random forest classification and regression
+*            with scikit-learn in Python, using Stata 16's new built-in Python
+*            integration functions.
 * More info: www.github.com/mdroste/stata-pyforests
-* Version: 0.11
-* Date: July 16, 2019
-* Author: Michael Droste
+* Version:   0.12
+* Date:      January 3, 2020
+* Author:    Michael Droste
 *===============================================================================
 
 program define pyforest, eclass
@@ -60,6 +60,8 @@ if "`type'"=="" {
 	di as error "ERROR: type() option needs to be specified. Valid options: type(classify) or type(regress)"
 	exit 1
 }
+if "`type'"=="reg" local type "regress"
+if "`type'"=="regression" local type "regress"
 if ~inlist("`type'","classify","regress") {
 	di as error "Syntax error: invalid choice for type (chosen: `type'). Valid options are classify or regress"
 	exit 1
@@ -343,7 +345,7 @@ if "`needs_encoding'"=="yes" {
 *-------------------------------------------------------------------------------
 
 * Return importance
-ereturn matrix importance = temp1
+*ereturn matrix importance = temp1
 
 end
 
@@ -410,7 +412,7 @@ def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_spl
 	Matrix.setRowNames("importance",list(features.values))
 	print(importance[0])
 	for i in range(z[0]):
-		print(i)
+		# print(i)
 		Matrix.storeAt("importance",i,0,importance[i])
 
 end
