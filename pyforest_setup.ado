@@ -17,7 +17,10 @@ program define pyforest_setup
 	di "This program checks to make sure that you have the necessary Python prequisites to run the Stata module pyforest."
 	di " "
 	
-	* First: Check to see if we have Python, and it is version 3 or above
+	*----------------------------------------------
+	* Check to see if we have Python 3.0+
+	*----------------------------------------------
+	
 	di "Looking for a Python 3.0+ installation..."
 	qui python query
 	local python_path = r(execpath)
@@ -41,7 +44,10 @@ program define pyforest_setup
 		exit 1
 	}
 
+	*----------------------------------------------
 	* Check to see if we have pandas
+	*----------------------------------------------
+	
 	di " "
 	di "Looking for Python module pandas..."
 	sleep 500
@@ -51,7 +57,7 @@ program define pyforest_setup
 		sleep 500
 		cap python: install("`python_path'","pandas")
 		cap python which pandas
-		if _rc!=0 shell pip3 install pandas
+		if _rc!=0 shell pip install pandas
 		cap python which pandas
 		if _rc!=0 {
 			di as error "  Error: Could not install pandas automatically with pip."
@@ -67,9 +73,12 @@ program define pyforest_setup
 		di " pandas was found!"
 	}
 
+	*----------------------------------------------
 	* Check to see if we have numpy
+	*----------------------------------------------
+	
 	di " "
-	di "Looking for Python module NumPy..."
+	di "Looking for Python module numpy..."
 	sleep 500
 	cap python which numpy
 	if _rc!=0 {
@@ -77,7 +86,7 @@ program define pyforest_setup
 		sleep 500
 		cap python: install("`python_path'","numpy")
 		cap python which numpy
-		if _rc!=0 shell pip3 install numpy
+		if _rc!=0 shell pip install numpy
 		cap python which numpy
 		if _rc!=0 {
 			di as error "  Error: Could not install numpy automatically with pip."
@@ -93,9 +102,12 @@ program define pyforest_setup
 		di " numpy was found!"
 	}
 	
+	*----------------------------------------------
 	* Check to see if we have Scikit-learn
+	*----------------------------------------------
+	
 	di " "
-	di "Looking for Python module scikit-learn (sklearn)..."
+	di "Looking for Python module sklearn..."
 	sleep 500
 	cap python which sklearn
 	if _rc!=0 {
@@ -103,7 +115,7 @@ program define pyforest_setup
 		sleep 500
 		cap python: install("`python_path'","sklearn")
 		cap python which numpy
-		if _rc!=0 shell pip3 install sklearn
+		if _rc!=0 shell pip install sklearn
 		cap python which sklearn
 		if _rc!=0 {
 			di as error "  Error: Could not install sklearn automatically with pip."
@@ -119,17 +131,24 @@ program define pyforest_setup
 		di " sklearn was found!"
 	}
 
+	*----------------------------------------------
 	* Check to see if we have SFI (definitely should have this, comes w/ Stata 16)
+	*----------------------------------------------
+	
 	di " "
-	di "Looking for sfi module..."
+	di "Looking for Python module sfi..."
 	cap python which sfi
 	if _rc!=0 {
 		di as error "  Error: Could not find module sfi. This should come automatically with Stata 16. Weird."
 		exit 1
 	}
 	else {
-		di " sfi was found!"
+		di "  sfi was found!"
 	}
+	
+	*----------------------------------------------
+	* Wrap up
+	*----------------------------------------------
 	
 	di " "
 	di "Awesome! All prerequisite packages are installed. Pyforest should now work."
