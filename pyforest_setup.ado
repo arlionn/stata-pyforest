@@ -49,7 +49,7 @@ program define pyforest_setup
 	if _rc!=0 {
 		di "  Warning: Could not find module pandas. Trying to install automatically with pip...."
 		sleep 500
-		*cap python: install("`python_path'","pandas")
+		cap python: install("`python_path'","pandas")
 		cap python which pandas
 		if _rc!=0 shell pip3 install pandas
 		cap python which pandas
@@ -75,7 +75,7 @@ program define pyforest_setup
 	if _rc!=0 {
 		di "  Warning: Could not find module numpy. Trying to install automatically with pip...."
 		sleep 500
-		*cap python: install("`python_path'","numpy")
+		cap python: install("`python_path'","numpy")
 		cap python which numpy
 		if _rc!=0 shell pip3 install numpy
 		cap python which numpy
@@ -101,7 +101,7 @@ program define pyforest_setup
 	if _rc!=0 {
 		di "  Warning: Could not find module sklearn. Trying to install automatically with pip...."
 		sleep 500
-		*cap python: install("`python_path'","sklearn")
+		cap python: install("`python_path'","sklearn")
 		cap python which numpy
 		if _rc!=0 shell pip3 install sklearn
 		cap python which sklearn
