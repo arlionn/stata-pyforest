@@ -45,11 +45,14 @@ program define pyforest_setup
 	di " "
 	di "Looking for Python module pandas..."
 	sleep 500
-	cap python which numpy
+	cap python which pandas
 	if _rc!=0 {
 		di "  Warning: Could not find module pandas. Trying to install automatically with pip...."
 		sleep 500
-		cap python: install("`python_path'","pandas")
+		*cap python: install("`python_path'","pandas")
+		cap python which pandas
+		if _rc!=0 shell pip3 install pandas
+		cap python which pandas
 		if _rc!=0 {
 			di as error "  Error: Could not install pandas automatically with pip."
 			di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
@@ -72,9 +75,12 @@ program define pyforest_setup
 	if _rc!=0 {
 		di "  Warning: Could not find module numpy. Trying to install automatically with pip...."
 		sleep 500
-		cap python: install("`python_path'","numpy")
+		*cap python: install("`python_path'","numpy")
+		cap python which numpy
+		if _rc!=0 shell pip3 install numpy
+		cap python which numpy
 		if _rc!=0 {
-			di as error "  Error: Could not install numpyautomatically with pip."
+			di as error "  Error: Could not install numpy automatically with pip."
 			di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
 			di as error "  Note that automatic installation requires internet access (can you ssc install stuff?)"
 			exit 1
@@ -95,7 +101,10 @@ program define pyforest_setup
 	if _rc!=0 {
 		di "  Warning: Could not find module sklearn. Trying to install automatically with pip...."
 		sleep 500
-		cap python: install("`python_path'","sklearn")
+		*cap python: install("`python_path'","sklearn")
+		cap python which numpy
+		if _rc!=0 shell pip3 install sklearn
+		cap python which sklearn
 		if _rc!=0 {
 			di as error "  Error: Could not install sklearn automatically with pip."
 			di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
