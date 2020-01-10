@@ -12,7 +12,7 @@ pyforest
 
 Regression and classification with random forests in Stata
 
-`version 0.11 16jul2019`
+`version 0.14 10jan2020`
 
 
 Overview
@@ -56,7 +56,7 @@ use http://www.stata-press.com/data/r10/iris.dta, clear
 gen train = runiform()<0.5
 
 * run random forest classification, save predictions as predicted_iris
-pyforest iris seplen sepwid petlen petwid, type(classify) training_identifier(train) save_prediction(predicted_iris)
+pyforest iris seplen sepwid petlen petwid, type(classify) training(train) prediction(predicted_iris)
 ```
 
 Here is a quick example demonstrating how to use pyforest for regression:
@@ -69,7 +69,11 @@ sysuse auto, clear
 gen train = runiform()<0.3
 
 * run random forest regression, save predictions as predicted_price
-pyforest price mpg trunk weight, type(regress) training_identifier(train) save_prediction(predicted_price)
+pyforest price mpg trunk weight, type(regress) training(train) prediction(predicted_price)
+
+* alternatively, if you prefer more stata-like syntax, you can subset to the training data with -if- and use post-estimation predict
+pyforest price mpg trunk weight if train==1, type(regress)
+predict predicted_price_v2
 ```
 
 (Incomplete) internal documentation can be found within Stata. This documentation is still a work in progress:

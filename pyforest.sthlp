@@ -27,15 +27,14 @@
 {synopt :{opt type(string)}}{it:string} may be {bf:regress} or {bf:classify}.{p_end}
 
 {syntab :Training options}
-{synopt :{opt frac_training(#)}}fraction of observations to place in training dataset{p_end}
-{synopt :{opt training_identifier(varname)}}Use varname as indicator for training sample{p_end}
+{synopt :{opt training(varname)}}varname is an indicator for the training sample (if unspecified, all observations used){p_end}
  
 {syntab :Random forest options}
 {synopt :{opt n_estimators(#)}}Number of trees{p_end}
 {synopt :{opt criterion(string)}}Criterion for splitting nodes (see details below){p_end}
 {synopt :{opt max_depth(#)}}Maximum tree depth{p_end}
 {synopt :{opt min_samples_split(#)}}Minimum observations per node{p_end}
-{synopt :{opt min_weight_fraction_leaf(#)}}xx{p_end}
+{synopt :{opt min_weight_fraction_leaf(#)}}Min fraction at leaf{p_end}
 {synopt :{opt max_features(numeric)}}Maximum number of features to consider per tree{p_end}
 {synopt :{opt max_leaf_nodes(#)}}Maximum leaf nodes{p_end}
 {synopt :{opt min_impurity_decrease(#)}}Propensity to split{p_end}
@@ -44,8 +43,8 @@
 {synopt :{opt class_weight}}Not yet implemented{p_end}
 
 {syntab :Output options}
-{synopt :{opt save_predictions(newvar)}}Save prediction as {bf: newvar}{p_end}
-{synopt :{opt save_training(newvar)}}Save indicator for training sample as {bf: newvar}{p_end}
+{synopt :{opt prediction(newvar)}}Save prediction as {bf: newvar}{p_end}
+{synopt :{opt training(newvar)}}Save indicator for training sample as {bf: newvar}{p_end}
 
 {syntab :Miscellaneous options}
 {synopt :{opt n_jobs(#)}}Number of cores to use when processing data{p_end}
@@ -123,11 +122,11 @@ see {help weight}.
 {dlgtab:Save Output}
  
 {phang}
-{opt save_prediction(newvar)} specifies a new variable name for storing predicted outcomes. By default, _rf_prediction is used. The prediction is populated for both the training and validation subsamples.
-{opt save_training(varname)} species the variable name for an indicator denoting whether an observation is in the training data or not. By default, _rf_prediction is used.
+{opt prediction(newvar)} specifies a new variable name for storing predicted outcomes. pyforest does not produce save predictions by default.
+{opt training(varname)} species the variable name for an indicator denoting whether an observation is in the training data or not. By default, _rf_prediction is used.
 
 {phang}
-{opt save_training(newvar)} specifies a new variable name for storing an indicator variable for whether an observation is in the training dataset.  If training_identifier() is used, this option does nothing, since training_identifier() points to a pre-existing variable.
+{opt training(newvar)} specifies a new variable name for storing an indicator variable for whether an observation is in the training dataset.  If training_identifier() is used, this option does nothing, since training_identifier() points to a pre-existing variable.
 
 {marker examples}{...}
 {title:Examples}
