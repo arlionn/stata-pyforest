@@ -4,7 +4,7 @@
 *            with scikit-learn in Python, using Stata 16's new built-in Python
 *            integration functions.
 * More info: www.github.com/mdroste/stata-pyforest
-* Version:   0.14
+* Version:   0.15
 * Date:      January 9, 2020
 * Author:    Michael Droste
 *===============================================================================
