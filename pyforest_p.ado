@@ -3,6 +3,7 @@
 * PURPOSE: Enables post-estimation -predict- command to obtain fitted values
 *   from pyforest.ado (random forest regression/classification with scikit-learn)
 * SEE ALSO: pyforest.ado
+* AUTHOR: Michael Droste
 *===============================================================================
 
 program define pyforest_p, eclass

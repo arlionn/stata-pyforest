@@ -1,4 +1,4 @@
-v 0.15
+v 0.16
 d
 d 'pyforest': random forests in stata
 d
@@ -6,4 +6,5 @@ d Distribution-Date: 20200110
 d
 f pyforest.ado
 f pyforest_p.ado
+f pyforest_setup.ado
 f pyforest.sthlp

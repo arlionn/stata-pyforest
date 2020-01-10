@@ -32,7 +32,7 @@ syntax varlist(min=2) [if] [in] [aweight fweight], ///
 	class_weight 			 	 	 /// XX NOT YET IMPLEMENTED
     frac_training(real 1)	 	 	 /// randomly assign fraction X to training
     training(varname) 	             /// training dataset identifier
-	prediction(string asis) 	         /// variable name to save predictions
+	prediction(string asis) 	     /// variable name to save predictions
 	standardize                  	 /// standardize feature variance XX NOT YET IMPLEMENTED
 ]
 
@@ -61,6 +61,7 @@ if substr("`python_vers'",1,1)!="3" {
 cap python which numpy
 if _rc!=0 {
 	di as error "Error: Could not import the Python module numpy. "
+	di as error: "Run the command {pyforest_setup:pyforest_setup} to try installing this from Stata."
 	exit 1
 }
 
@@ -68,6 +69,15 @@ if _rc!=0 {
 cap python which pandas
 if _rc!=0 {
 	di as error: "Error: Could not import the Python module pandas."
+	di as error: "Run the command {pyforest_setup:pyforest_setup} to try installing this from Stata."
+	exit 1
+}
+
+* Check to see if we have Scikit-learn
+cap python which pandas
+if _rc!=0 {
+	di as error: "Error: Could not import the Python module scikit-learn (sklearn)."
+	di as error: "Run the command {pyforest_setup:pyforest_setup} to try installing this from Stata."
 	exit 1
 }
 
@@ -337,7 +347,7 @@ qui count if `training_var'==1
 local num_obs_train = `r(N)'
 qui count
 local num_obs_val = `r(N)' - `num_obs_train'
-
+local nonempty_test = `num_obs_val'>0
 
 *-------------------------------------------------------------------------------
 * Format strings and display text box
@@ -369,11 +379,13 @@ python: run_random_forest( ///
 	`class_weight', ///
 	"`prediction'", ///
 	"`training_var'", ///
-	`importance')
+	`importance', `nonempty_test')
 	
-	
-if "`prediction'"=="" local prediction_di "prediction() not specified. Use -{help predict:predict}- to obtain predictions.""
+* xx move me
+if "`prediction'"=="" local prediction_di "prediction() not specified. Use -{help predict:predict}- for post-estimation predictions.""
 if "`prediction'"!="" local prediction_di "`prediction'"
+if "`random_state'"=="None" local seed_di "Not set"
+if "`random_state'"!="None" local seed_di `random_state'
 
 * Display output
 noi di "{hline 80}"
@@ -395,15 +407,23 @@ noi di in gr "Max leaf nodes        = " in ye "`max_leaf_nodes'" _continue
 noi di in gr _col(50) "Min wt frac/leaf      = " in ye "`min_weight_fraction_leaf'"
 noi di in gr "Splitting criterion   = " in ye "`criterion'" _continue
 noi di in gr _col(50) "Min impurity decrease = " in ye "`min_impurity_decrease'"
+noi di in gr "Seed for RNG          = " in ye "`seed_di'"
 noi di " "
 noi di in gr "{ul:Output}"
-noi di in gr "Saved prediction: " in ye "`prediction_di'"
+noi di in gr "Prediction: " in ye "`prediction_di'"
 if "`type'"=="regress" {
 	noi di in gr "In-sample RMSE: `e(training_rmse)'"
 	noi di in gr "In-sample MAE: `e(training_mae)'"
 }
 if "`type'"=="classify" {
-	noi di in gr "Accuracy: `e(training_accuracy)'"
+	noi di in gr "In-sample classification accuracy: `e(training_accuracy)'"
+}
+if "`type'"=="regress" & `nonempty_test'==1 {
+	noi di in gr "Out of sample RMSE: `e(test_rmse)'"
+	noi di in gr "Out of sample MAE: `e(test_mae)'"
+}
+if "`type'"=="classify" & `nonempty_test'==1 {
+	noi di in gr "Out of sample classification accuracy: `e(test_accuracy)'"
 }
 noi di " "
 noi di in gr "For help, see the pyforest internal documentation by typing {help pyforest:help pyforest}"
@@ -466,9 +486,13 @@ import __main__
 # Define Python function: run_random_forest
 #-------------------------------------------------------------------------------
 
-def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_split,min_samples_leaf,min_weight_fraction_leaf,max_features,max_leaf_nodes,min_impurity_decrease,bootstrap,oob_score,n_jobs,random_state,verbose,warm_start,class_weight,prediction,training,importance):
+def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_split,min_samples_leaf,min_weight_fraction_leaf,max_features,max_leaf_nodes,min_impurity_decrease,bootstrap,oob_score,n_jobs,random_state,verbose,warm_start,class_weight,prediction,training,importance,nonempty_test):
 
-	# Load data into Pandas data frame
+	#-----------------------------------
+	# Load data from Stata into Python
+	#-----------------------------------
+	
+	# Load into Pandas data frame
 	df = DataFrame(Data.get(vars))
 	colnames = []
 	for var in vars.split():
@@ -482,11 +506,15 @@ def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_spl
 	features = df.columns[2:]
 	y        = df.columns[1]
 	
-    # Initialize random forest regressor (if model type is regression)
+	#-----------------------------------
+	# Run random forest model
+	#-----------------------------------
+	
+    # Initialize random forest regressor (if model type is regress)
 	if type=="regress":
 		rf = RandomForestRegressor(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth, min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf, min_weight_fraction_leaf=min_weight_fraction_leaf, max_features=max_features, max_leaf_nodes=max_leaf_nodes, min_impurity_decrease=min_impurity_decrease, bootstrap=bootstrap, oob_score=oob_score, n_jobs=n_jobs, random_state=random_state, verbose=verbose, warm_start=warm_start)
 
-	# Initialize random forest classifier (if model type is classification)
+	# Initialize random forest classifier (if model type is classify)
 	if type=="classify":
 		rf = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth, min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf, min_weight_fraction_leaf=min_weight_fraction_leaf, max_features=max_features, max_leaf_nodes=max_leaf_nodes, min_impurity_decrease=min_impurity_decrease, bootstrap=bootstrap, oob_score=oob_score, n_jobs=n_jobs, random_state=random_state, verbose=verbose, warm_start=warm_start)
 
@@ -507,7 +535,8 @@ def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_spl
 	pred_insample = rf.predict(df_train[features])
 	y_insample = df_train[y]
 	
-	# If regression: get mae, rmse
+	
+	# If regression: get in sample (training sample) mae, rmse
 	if type=="regress":
 		insample_mae = metrics.mean_absolute_error(y_insample, pred_insample)
 		insample_mse = metrics.mean_squared_error(y_insample, pred_insample)
@@ -515,10 +544,31 @@ def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_spl
 		Scalar.setValue("e(training_mae)", insample_mae, vtype='visible')
 		Scalar.setValue("e(training_rmse)", insample_rmse, vtype='visible')
 	
-	# iIf classify: get accuracy
+	
+	# If classify: get in sample (training sample) accuracy
 	if type=="classify":
 		insample_accuracy = metrics.accuracy_score(y_insample, pred_insample)
 		Scalar.setValue("e(training_accuracy)", insample_accuracy, vtype='visible')
+		
+	
+	# If nonempty test sample, get out of sample stats
+	if type=="regress" and nonempty_test==1:
+		print("INSIDE")
+		print(nonempty_test)
+		pred_outsample = rf.predict(df_test[features])
+		y_outsample = df_test[y]
+		outsample_mae = metrics.mean_absolute_error(y_outsample, pred_outsample)
+		outsample_mse = metrics.mean_squared_error(y_outsample, pred_outsample)
+		outsample_rmse = np.sqrt(outsample_mse)
+		Scalar.setValue("e(test_mae)", outsample_mae, vtype='visible')
+		Scalar.setValue("e(test_rmse)", outsample_rmse, vtype='visible')
+	
+	if type=="classify" and nonempty_test==1:
+		pred_outsample = rf.predict(df_test[features])
+		y_outsample = df_test[y]
+		outsample_accuracy = metrics.accuracy_score(y_outsample, pred_outsample)
+		Scalar.setValue("e(test_accuracy)", outsample_accuracy, vtype='visible')
+
 	
 	# If applicable, display feature importance
 	feature_importances = DataFrame(rf.feature_importances_,
