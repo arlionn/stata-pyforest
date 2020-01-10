@@ -1,15 +1,15 @@
 *===============================================================================
-* Program:   pyforest_dev.ado
+* Program:   pyforest.ado
 * Purpose:   Stata wrapper for random forest classification and regression
 *            with scikit-learn in Python, using Stata 16's new built-in Python
 *            integration functions.
-* More info: www.github.com/mdroste/stata-pyforests
+* More info: www.github.com/mdroste/stata-pyforest
 * Version:   0.14
 * Date:      January 9, 2020
 * Author:    Michael Droste
 *===============================================================================
 
-program define pyforest_dev, eclass
+program define pyforest, eclass
 version 16.0
 syntax varlist(min=2) [if] [in] [aweight fweight], ///
 [ ///
