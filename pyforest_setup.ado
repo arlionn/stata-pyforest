@@ -56,15 +56,23 @@ program define pyforest_setup
 		di in gr "  Warning: Could not find the module. "
 	}
 	
-	* First try to install: Python subprocess call
+	* Auto install method 1: Python subprocess call
 	cap python which pandas
 	if _rc!=0 {
 		di in gr "    Trying to install automatically with Python subprocess call to pip..."
 		sleep 300
 		cap python: install("`python_path'","pandas")
 	}
+	
+	* Auto install method 2: Python subprocess call (user)
+	cap python which pandas
+	if _rc!=0 {
+		di in gr "    Trying to install automatically with Python subprocess call to pip (user directory install)..."
+		sleep 300
+		cap python: install2("`python_path'","pandas")
+	}
 
-	* Second try: Shell call with python -m to identify pip version
+	* Auto install method 3: Shell call with python -m to identify pip version
 	cap python which pandas
 	if _rc!=0 {
 		di in gr "    Trying to install automatically with Stata shell call to pip..."
@@ -72,7 +80,7 @@ program define pyforest_setup
 		shell `python_path' -m pip install pandas
 	} 
 	
-	* Last try: Shell call with python -m to identify pip version, user dir
+	* Auto install method 4: Shell call with python -m to identify pip version, user dir
 	cap python which pandas
 	if _rc!=0 {
 		di in gr "    Trying to install automatically with Stata shell call to pip (user directory installation)..."
@@ -108,15 +116,23 @@ program define pyforest_setup
 		di in gr "  Warning: Could not find the module. "
 	}
 	
-	* First try to install: Python subprocess call
+	* Auto install method 1: Python subprocess call
 	cap python which numpy
 	if _rc!=0 {
 		di in gr "    Trying to install automatically with Python subprocess call to pip..."
 		sleep 300
 		cap python: install("`python_path'","numpy")
 	}
+	
+	* Auto install method 2: Python subprocess call (user)
+	cap python which numpy
+	if _rc!=0 {
+		di in gr "    Trying to install automatically with Python subprocess call to pip (user directory install)..."
+		sleep 300
+		cap python: install2("`python_path'","numpy")
+	}
 
-	* Second try: Shell call with python -m to identify pip version
+	* Auto install method 3: Shell call with python -m to identify pip version
 	cap python which numpy
 	if _rc!=0 {
 		di in gr "    Trying to install automatically with Stata shell call to pip..."
@@ -124,7 +140,7 @@ program define pyforest_setup
 		shell `python_path' -m pip install numpy
 	} 
 	
-	* Last try: Shell call with python -m to identify pip version, user dir
+	* Auto install method 4: Shell call with python -m to identify pip version, user dir
 	cap python which numpy
 	if _rc!=0 {
 		di in gr "    Trying to install automatically with Stata shell call to pip (user directory installation)..."
@@ -159,23 +175,31 @@ program define pyforest_setup
 		di in gr "  Warning: Could not find the module. "
 	}
 	
-	* First try to install: Python subprocess call
+	* Auto install method 1: Python subprocess call
 	cap python which sklearn
 	if _rc!=0 {
 		di in gr "    Trying to install automatically with Python subprocess call to pip..."
 		sleep 300
-		*cap python: install("`python_path'","sklearn")
+		cap python: install("`python_path'","sklearn")
 	}
-
-	* Second try: Shell call with python -m to identify pip version
+	
+	* Auto install method 2: Python subprocess call (user)
 	cap python which sklearn
 	if _rc!=0 {
-		di in gr "    Trying to install with Stata shell call to pip..."
+		di in gr "    Trying to install automatically with Python subprocess call to pip (user directory install)..."
+		sleep 300
+		cap python: install2("`python_path'","sklearn")
+	}
+
+	* Auto install method 3: Shell call with python -m to identify pip version
+	cap python which sklearn
+	if _rc!=0 {
+		di in gr "    Trying to install automatically with Stata shell call to pip..."
 		sleep 300
 		shell `python_path' -m pip install sklearn
 	} 
 	
-	* Last try: Shell call with python -m to identify pip version, user dir
+	* Auto install method 4: Shell call with python -m to identify pip version, user dir
 	cap python which sklearn
 	if _rc!=0 {
 		di in gr "    Trying to install automatically with Stata shell call to pip (user directory installation)..."
@@ -228,5 +252,9 @@ python:
 def install(python_path, package):
 	import subprocess, sys
 	subprocess.check_call([python_path, "-m", "pip", "install", package])
+	
+def install2(python_path, package):
+	import subprocess, sys
+	subprocess.check_call([python_path, "-m", "pip", "install", "--user", package])
 	
 end
