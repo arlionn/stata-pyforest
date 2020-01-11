@@ -32,7 +32,7 @@ program define pyforest_setup
 		di "  Python version: `python_vers'"
 	}
 	if "`python_path'"=="" {
-		di as error "  Error: No python path found! Do you have Python 3.0+ installed?"
+		di as error "  Error: No python path found! Do you have Python 2.7+ installed?"
 		di as error "  If you do, use the Stata command -set pythonpath (path to python executable), permanently-"
 		di as error "  If you're not sure, use the Stata command -python search- to look for Python installations."
 		di as error "  If you do not have Python installed, I highly recommend using the Anaconda distribution, which contains everything you need to run pyforest."
@@ -44,89 +44,134 @@ program define pyforest_setup
 	* Check to see if we have pandas
 	*----------------------------------------------
 	
+	* Check whether or nnot we have Pandas.
 	di " "
 	di "Looking for Python module pandas..."
-	sleep 500
+	local installed 0
+	cap python which pandas
+	if _rc==0 {
+		di "  The module was found."
+		local installed 1
+	}
+	if _rc!=0 {
+		di "  Warning: Could not find the module. "
+	}
+	
+	* First try to install: Python subprocess call
+	cap python which pandas
+	if _rc!=0 {
+		di "    Trying to install automatically with Python subprocess call to pip..."
+		sleep 300
+		cap python: install("`python_path'","pandas")
+	}
+
+	* Second try: Shell call with python -m to identify pip version
+	cap python which pandas
+	if _rc!=0 {
+		di "    Trying to install automatically with Stata shell call to pip..."
+		sleep 300
+		shell `python_path' -m pip install pandas
+	} 
 	
 	cap python which pandas
 	if _rc!=0 {
-		di "  Warning: Could not find module pandas. "
-		sleep 500
-		di "    Trying to install automatically with Python subprocess call to pip..."
-		cap python: install("`python_path'","pandas")
-		cap python which pandas
-		if _rc!=0 shell pip install pandas
-		cap python which pandas
-		if _rc!=0 {
-			di as error "  Error: Could not install pandas automatically with pip."
-			di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
-			di as error "  Note that automatic installation requires internet access (can you ssc install stuff?)"
-			exit 1
-		}
-		if _rc==0 {
-			di "  Installed pandas successfully!"
-		}
+		di as error "  Error: Could not install pandas automatically with pip."
+		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
+		di as error "  Note that automatic installation requires internet access (can you ssc install stuff?)"
+		exit 1
 	}
-	else {
-		di " pandas was found!"
+	if _rc==0 & `installed'==0 {
+		di "  Installed pandas successfully!"
 	}
-
+	
 	*----------------------------------------------
 	* Check to see if we have numpy
 	*----------------------------------------------
 	
+	* Check whether or nnot we have numpy.
 	di " "
 	di "Looking for Python module numpy..."
-	sleep 500
+	local installed 0
+	cap python which numpy
+	if _rc==0 {
+		di "  The module was found."
+		local installed 1
+	}
+	if _rc!=0 {
+		di "  Warning: Could not find the module. "
+	}
+	
+	* First try to install: Python subprocess call
 	cap python which numpy
 	if _rc!=0 {
-		di "  Warning: Could not find module numpy. Trying to install automatically with pip...."
-		sleep 500
+		di "    Trying to install automatically with Python subprocess call to pip..."
+		sleep 300
 		cap python: install("`python_path'","numpy")
-		cap python which numpy
-		if _rc!=0 shell pip install numpy
-		cap python which numpy
-		if _rc!=0 {
-			di as error "  Error: Could not install numpy automatically with pip."
-			di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
-			di as error "  Note that automatic installation requires internet access (can you ssc install stuff?)"
-			exit 1
-		}
-		if _rc==0 {
-			di "  Installed numpy successfully!"
-		}
 	}
-	else {
-		di " numpy was found!"
+
+	* Second try: Shell call with python -m to identify pip version
+	cap python which numpy
+	if _rc!=0 {
+		di "    OK, that didn't work!"
+		di "    Trying to install automatically with Stata shell call to pip..."
+		sleep 300
+		shell `python_path' -m pip install numpy
+	} 
+	
+	cap python which numpy
+	if _rc!=0 {
+		di as error "  Error: Could not install numpy automatically with pip."
+		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
+		di as error "  Note that automatic installation requires internet access (can you ssc install stuff?)"
+		exit 1
+	}
+	if _rc==0 & `installed'==0 {
+		di "  Installed numpy successfully!"
 	}
 	
 	*----------------------------------------------
 	* Check to see if we have Scikit-learn
 	*----------------------------------------------
 	
+	* Check whether or nnot we have sklearn.
 	di " "
 	di "Looking for Python module sklearn..."
-	sleep 500
+	local installed 0
+	cap python which sklearn
+	if _rc==0 {
+		di "  The module was found."
+		local installed 1
+	}
+	if _rc!=0 {
+		di "  Warning: Could not find the module. "
+	}
+	
+	* First try to install: Python subprocess call
 	cap python which sklearn
 	if _rc!=0 {
-		di "  Warning: Could not find module sklearn. Trying to install automatically with pip...."
-		sleep 500
-		cap python: install("`python_path'","sklearn")
-		cap python which numpy
-		if _rc!=0 shell pip install sklearn
-		cap python which sklearn
-		if _rc!=0 {
-			di as error "  Error: Could not install sklearn automatically with pip."
-			di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
-			di as error "  Note that automatic installation requires internet access (can you ssc install stuff?)"
-			exit 1
-		}
-		if _rc==0 {
-			di "  Installed scikit-learn (sklearn) successfully!"
-		}
+		di "    Trying to install automatically with Python subprocess call to pip..."
+		sleep 300
+		*cap python: install("`python_path'","sklearn")
 	}
-	else {
-		di " sklearn was found!"
+
+	* Second try: Shell call with python -m to identify pip version
+	cap python which sklearn
+	if _rc!=0 {
+		di "    OK, that didn't work!"
+		di "    Trying to install with Stata shell call to pip..."
+		sleep 300
+		shell `python_path' -m pip install sklearn
+	} 
+	
+	cap python which sklearn
+	if _rc!=0 {
+		di as error "  Error: Could not install sklearn automatically with pip."
+		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
+		di as error "  Note that automatic installation requires internet access (can you ssc install stuff?)"
+		exit 1
+	}
+	if _rc==0 & `installed'==0 {
+		di "  Installed sklearn successfully!"
 	}
 
 	*----------------------------------------------
