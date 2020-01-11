@@ -37,14 +37,6 @@ program define pyforest_setup
 		di as error "  If you're not sure, use the Stata command -python search- to look for Python installations."
 		di as error "  If you do not have Python installed, I highly recommend using the Anaconda distribution, which contains everything you need to run pyforest."
 		di as error "  Anaconda: https://www.anaconda.com/distribution/#download-section"
-		di as error "  Make sure to get the Python 3.7 version and **not** Python 2.7!"
-		exit 1
-	}
-	if substr("`python_vers'",1,1)!="3" {
-		di as error "  Error: pyforest requires Python 3.0+. The Python executable that was detected is version `python_vers'"
-		di as error "  Stata thinks your Python executable is located at: `python_path'"
-		di as error "  Use the Stata command {python search:python search} to look for other installations, or use -set pythonpath (Python executable path)- to point to a Python 3.0+ installation."
-		di as error "  You can download Python 3.7 easily with the Anaconda distribution: https://www.anaconda.com/distribution/#download-section"
 		exit 1
 	}
 
