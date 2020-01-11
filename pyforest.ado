@@ -45,15 +45,9 @@ qui python query
 local python_path = r(execpath)
 local python_vers = r(version)
 if "`python_path'"=="" {
-	di as error "Error: No python path found! Do you have Python 3.0+ installed?"
+	di as error "Error: No python path found! Do you have Python 2.7+ installed?"
 	di as error "If you do, use the Stata command -set pythonpath (path to python executable), permanently-"
 	di as error "If you're not sure, use the Stata command -python search- to look for Python installations."
-	exit 1
-}
-if substr("`python_vers'",1,1)!="3" {
-	di as error "Error: pyforest requires Python 3.0+. The Python executable that was detected is version `python_vers'"
-	di as error "Stata thinks your Python executable is located at: `python_path'"
-	di as error "Use the Stata command -python search- to look for other installations, or use -set pythonpath (Python executable path)- to point to a Python 3.0+ installation."
 	exit 1
 }
 
@@ -88,7 +82,6 @@ if _rc!=0 {
 	di as error: "This is weird, since it should come with Stata 16..."
 	exit 1
 }
-
 
 *-------------------------------------------------------------------------------
 * Handle arguments
