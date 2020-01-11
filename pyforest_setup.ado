@@ -21,15 +21,15 @@ program define pyforest_setup
 	* Check to see if we have Python 3.0+
 	*----------------------------------------------
 	
-	di "Looking for a Python 3.0+ installation..."
+	di in gr "Looking for a Python 3.0+ installation..."
 	qui python query
 	local python_path = r(execpath)
 	local python_vers = r(version)
 	local python_path = subinstr("`python_path'","\","/",.)
 	if "`python_path'"!="" {
-		di "  Compatible Python installation found!"
-		di "  Path to installation: `python_path'"
-		di "  Python version: `python_vers'"
+		di in gr "  Compatible Python installation found!"
+		di in gr "  Path to installation: `python_path'"
+		di in gr "  Python version: `python_vers'"
 	}
 	if "`python_path'"=="" {
 		di as error "  Error: No python path found! Do you have Python 2.7+ installed?"
@@ -44,22 +44,22 @@ program define pyforest_setup
 	*----------------------------------------------
 	
 	* Check whether or nnot we have Pandas.
-	di " "
-	di "Looking for Python module pandas..."
+	di in gr " "
+	di in gr "Looking for Python module pandas..."
 	local installed 0
 	cap python which pandas
 	if _rc==0 {
-		di "  The module was found."
+		di in gr "  The module was found."
 		local installed 1
 	}
 	if _rc!=0 {
-		di "  Warning: Could not find the module. "
+		di in gr "  Warning: Could not find the module. "
 	}
 	
 	* First try to install: Python subprocess call
 	cap python which pandas
 	if _rc!=0 {
-		di "    Trying to install automatically with Python subprocess call to pip..."
+		di in gr "    Trying to install automatically with Python subprocess call to pip..."
 		sleep 300
 		cap python: install("`python_path'","pandas")
 	}
@@ -67,7 +67,7 @@ program define pyforest_setup
 	* Second try: Shell call with python -m to identify pip version
 	cap python which pandas
 	if _rc!=0 {
-		di "    Trying to install automatically with Stata shell call to pip..."
+		di in gr "    Trying to install automatically with Stata shell call to pip..."
 		sleep 300
 		shell `python_path' -m pip install pandas
 	} 
@@ -75,20 +75,20 @@ program define pyforest_setup
 	* Last try: Shell call with python -m to identify pip version, user dir
 	cap python which pandas
 	if _rc!=0 {
-		di "    Trying to install automatically with Stata shell call to pip (user directory installation)..."
+		di in gr "    Trying to install automatically with Stata shell call to pip (user directory installation)..."
 		sleep 300
 		shell `python_path' -m pip install --user pandas
 	} 
 	
+	* If we still do not have pandas installed, display error.
 	cap python which pandas
 	if _rc!=0 {
-		di as error "  Error: Could not install pandas automatically with pip."
+		di as error "  Error: Could not install pandas automatically. You will need to install it manually."
 		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
-		di as error "  Note that automatic installation requires internet access (can you ssc install stuff?)"
 		exit 1
 	}
 	if _rc==0 & `installed'==0 {
-		di "  Installed pandas successfully! You may need to restart Stata for this change to take effect."
+		di in gr "  Installed pandas successfully! You may need to restart Stata for this change to take effect."
 	}
 	
 	*----------------------------------------------
@@ -96,22 +96,22 @@ program define pyforest_setup
 	*----------------------------------------------
 	
 	* Check whether or nnot we have numpy.
-	di " "
-	di "Looking for Python module numpy..."
+	di in gr " "
+	di in gr "Looking for Python module numpy..."
 	local installed 0
 	cap python which numpy
 	if _rc==0 {
-		di "  The module was found."
+		di in gr "  The module was found."
 		local installed 1
 	}
 	if _rc!=0 {
-		di "  Warning: Could not find the module. "
+		di in gr "  Warning: Could not find the module. "
 	}
 	
 	* First try to install: Python subprocess call
 	cap python which numpy
 	if _rc!=0 {
-		di "    Trying to install automatically with Python subprocess call to pip..."
+		di in gr "    Trying to install automatically with Python subprocess call to pip..."
 		sleep 300
 		cap python: install("`python_path'","numpy")
 	}
@@ -119,8 +119,7 @@ program define pyforest_setup
 	* Second try: Shell call with python -m to identify pip version
 	cap python which numpy
 	if _rc!=0 {
-		di "    OK, that didn't work!"
-		di "    Trying to install automatically with Stata shell call to pip..."
+		di in gr "    Trying to install automatically with Stata shell call to pip..."
 		sleep 300
 		shell `python_path' -m pip install numpy
 	} 
@@ -128,20 +127,19 @@ program define pyforest_setup
 	* Last try: Shell call with python -m to identify pip version, user dir
 	cap python which numpy
 	if _rc!=0 {
-		di "    Trying to install automatically with Stata shell call to pip (user directory installation)..."
+		di in gr "    Trying to install automatically with Stata shell call to pip (user directory installation)..."
 		sleep 300
 		shell `python_path' -m pip install --user numpy
 	} 
 	
 	cap python which numpy
 	if _rc!=0 {
-		di as error "  Error: Could not install numpy automatically with pip."
+		di as error "  Error: Could not install numpy automatically. You will need to install it manually."
 		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
-		di as error "  Note that automatic installation requires internet access (can you ssc install stuff?)"
 		exit 1
 	}
 	if _rc==0 & `installed'==0 {
-		di "  Installed numpy successfully!"
+		di in gr "  Installed numpy successfully!"
 	}
 	
 	*----------------------------------------------
@@ -149,22 +147,22 @@ program define pyforest_setup
 	*----------------------------------------------
 	
 	* Check whether or nnot we have sklearn.
-	di " "
-	di "Looking for Python module sklearn..."
+	di in gr " "
+	di in gr "Looking for Python module sklearn..."
 	local installed 0
 	cap python which sklearn
 	if _rc==0 {
-		di "  The module was found."
+		di in gr "  The module was found."
 		local installed 1
 	}
 	if _rc!=0 {
-		di "  Warning: Could not find the module. "
+		di in gr "  Warning: Could not find the module. "
 	}
 	
 	* First try to install: Python subprocess call
 	cap python which sklearn
 	if _rc!=0 {
-		di "    Trying to install automatically with Python subprocess call to pip..."
+		di in gr "    Trying to install automatically with Python subprocess call to pip..."
 		sleep 300
 		*cap python: install("`python_path'","sklearn")
 	}
@@ -172,8 +170,7 @@ program define pyforest_setup
 	* Second try: Shell call with python -m to identify pip version
 	cap python which sklearn
 	if _rc!=0 {
-		di "    OK, that didn't work!"
-		di "    Trying to install with Stata shell call to pip..."
+		di in gr "    Trying to install with Stata shell call to pip..."
 		sleep 300
 		shell `python_path' -m pip install sklearn
 	} 
@@ -181,45 +178,44 @@ program define pyforest_setup
 	* Last try: Shell call with python -m to identify pip version, user dir
 	cap python which sklearn
 	if _rc!=0 {
-		di "    Trying to install automatically with Stata shell call to pip (user directory installation)..."
+		di in gr "    Trying to install automatically with Stata shell call to pip (user directory installation)..."
 		sleep 300
 		shell `python_path' -m pip install --user sklearn
 	} 
 	
 	cap python which sklearn
 	if _rc!=0 {
-		di as error "  Error: Could not install sklearn automatically with pip."
+		di as error "  Error: Could not install scikit-learn automatically. You will need to install it manually."
 		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
-		di as error "  Note that automatic installation requires internet access (can you ssc install stuff?)"
 		exit 1
 	}
 	if _rc==0 & `installed'==0 {
-		di "  Installed sklearn successfully!"
+		di in gr "  Installed sklearn successfully!"
 	}
 
 	*----------------------------------------------
 	* Check to see if we have SFI (definitely should have this, comes w/ Stata 16)
 	*----------------------------------------------
 	
-	di " "
-	di "Looking for Python module sfi..."
+	di in gr " "
+	di in gr "Looking for Python module sfi..."
 	cap python which sfi
 	if _rc!=0 {
 		di as error "  Error: Could not find module sfi. This should come automatically with Stata 16. Weird."
 		exit 1
 	}
 	else {
-		di "  sfi was found!"
+		di in gr "  sfi was found!"
 	}
 	
 	*----------------------------------------------
 	* Wrap up
 	*----------------------------------------------
 	
-	di " "
-	di "Done! All prerequisites for pyforest are installed."
-	di "You may need to restart Stata for any installed Python modules to become available."
-	di " "
+	di in gr " "
+	di in gr "Done! All prerequisites for pyforest are installed."
+	di in gr "You may need to restart Stata for any installed Python modules to become available."
+	di in gr " "
 	
 end
 
