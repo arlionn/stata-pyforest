@@ -33,9 +33,8 @@ program define pyforest_setup
 	}
 	if "`python_path'"=="" {
 		di as error "  Error: No python path found! Do you have Python 2.7+ installed?"
-		di as error "  If you do, use the Stata command -set pythonpath (path to python executable), permanently-"
-		di as error "  If you're not sure, use the Stata command -python search- to look for Python installations."
-		di as error "  If you do not have Python installed, I highly recommend using the Anaconda distribution, which contains everything you need to run pyforest."
+		di as error "  If you do have Python installed, use the Stata command -{set python_path:set python_path}, permanently- to tell Stata where to look."
+		di as error "  If you do not have Python installed (or are not sure if you do), I recommend downloading Anaconda, which includes everything you need out of the box and will be detected automatically by Stata."
 		di as error "  Anaconda: https://www.anaconda.com/distribution/#download-section"
 		exit 1
 	}
@@ -73,6 +72,14 @@ program define pyforest_setup
 		shell `python_path' -m pip install pandas
 	} 
 	
+	* Last try: Shell call with python -m to identify pip version, user dir
+	cap python which pandas
+	if _rc!=0 {
+		di "    Trying to install automatically with Stata shell call to pip (user directory installation)..."
+		sleep 300
+		shell `python_path' -m pip install --user pandas
+	} 
+	
 	cap python which pandas
 	if _rc!=0 {
 		di as error "  Error: Could not install pandas automatically with pip."
@@ -81,7 +88,7 @@ program define pyforest_setup
 		exit 1
 	}
 	if _rc==0 & `installed'==0 {
-		di "  Installed pandas successfully!"
+		di "  Installed pandas successfully! You may need to restart Stata for this change to take effect."
 	}
 	
 	*----------------------------------------------
@@ -116,6 +123,14 @@ program define pyforest_setup
 		di "    Trying to install automatically with Stata shell call to pip..."
 		sleep 300
 		shell `python_path' -m pip install numpy
+	} 
+	
+	* Last try: Shell call with python -m to identify pip version, user dir
+	cap python which numpy
+	if _rc!=0 {
+		di "    Trying to install automatically with Stata shell call to pip (user directory installation)..."
+		sleep 300
+		shell `python_path' -m pip install --user numpy
 	} 
 	
 	cap python which numpy
@@ -163,6 +178,14 @@ program define pyforest_setup
 		shell `python_path' -m pip install sklearn
 	} 
 	
+	* Last try: Shell call with python -m to identify pip version, user dir
+	cap python which sklearn
+	if _rc!=0 {
+		di "    Trying to install automatically with Stata shell call to pip (user directory installation)..."
+		sleep 300
+		shell `python_path' -m pip install --user sklearn
+	} 
+	
 	cap python which sklearn
 	if _rc!=0 {
 		di as error "  Error: Could not install sklearn automatically with pip."
@@ -194,12 +217,14 @@ program define pyforest_setup
 	*----------------------------------------------
 	
 	di " "
-	di "Awesome! All prerequisite packages are installed. Pyforest should now work."
+	di "Done! All prerequisites for pyforest are installed."
+	di "You may need to restart Stata for any installed Python modules to become available."
+	di " "
 	
 end
 
 *-------------------------------------------------------------------------------
-* Helper function for python
+* Helper function for python subprocess check call
 *-------------------------------------------------------------------------------
 
 python:
