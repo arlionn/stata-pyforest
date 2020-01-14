@@ -12,13 +12,13 @@ pyforest
 
 Regression and classification with random forests in Stata
 
-`version 0.19 11jan2020`
+`version 0.20 14jan2020`
 
 
 Overview
 ---------------------------------
 
-pyforest is an implementation of the random forest algorithm in Stata 16 for classification and regression. It is essentially a wrapper around the popular [scikit-learn](https://scikit-learn.org/) module for Python. It enables Stata users to quickly and flexibly estimate random forest models within Stata.
+pyforest is an implementation of the [random forests](https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf) algorithm in Stata 16 for classification and regression. It is essentially a wrapper around the popular [scikit-learn](https://scikit-learn.org/) module for Python. It enables Stata users to quickly and flexibly estimate random forest models directly from Stata.
 
 
 Prequisites
@@ -26,7 +26,7 @@ Prequisites
 
 pyforest requires Stata version 16 or higher, since it relies on the [native Python integration](https://www.stata.com/new-in-stata/python-integration/) introduced in Stata 16.0. 
 
-pyforest also requires Python 2.7+ and a few Python modules, namely [scikit-learn](https://scikit-learn.org/), [pandas](https://pandas.pydata.org/), and [NumPy](https://numpy.org/)). This repository includes an ado-file, pyforest_setup, that will attempt to install these modules automatically. Alternatively, users can download and use [Anaconda](https://www.anaconda.com/distribution/#download-section), which contains all of these modules (and many more) out of the box.
+pyforest also requires Python 2.7+ , [pandas](https://pandas.pydata.org/), and [NumPy](https://numpy.org/)). This repository includes an ado-file, pyforest_setup, that will attempt to install these modules automatically, if the user does not already have them. Alternatively, users can download and use [Anaconda](https://www.anaconda.com/distribution/#download-section), which contains all of these modules (and many more) out of the box.
 
 
 Installation
@@ -103,14 +103,6 @@ The following items will be addressed soon:
 - [ ] Return some stuff in e()
 - [ ] Post-estimation: feature importance
 - [ ] Model selection: cross-validation
-
-
-Acknowledgements
----------------------------------
-
-This program relies primarily on scikit-learn.
-
-Thanks to 
 
 
 License

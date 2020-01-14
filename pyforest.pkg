@@ -1,8 +1,8 @@
-v 0.191
+v 0.20
 d
 d 'pyforest': random forests in stata
 d
-d Distribution-Date: 20200111
+d Distribution-Date: 20200114
 d
 f pyforest.ado
 f pyforest_p.ado
