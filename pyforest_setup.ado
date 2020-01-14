@@ -21,7 +21,7 @@ program define pyforest_setup
 	* Check to see if we have Python 3.0+
 	*----------------------------------------------
 	
-	di in gr "Looking for a Python 3.0+ installation..."
+	di in gr "Checking for Stata-compatible Python installation..."
 	qui python query
 	local python_path = r(execpath)
 	local python_vers = r(version)
@@ -61,7 +61,7 @@ program define pyforest_setup
 	if _rc!=0 {
 		di in gr "    Trying to install automatically with Python subprocess call to pip..."
 		sleep 300
-		cap python: install("`python_path'","pandas")
+		python: install("`python_path'","pandas")
 	}
 	
 	* Auto install method 2: Python subprocess call (user)
@@ -69,7 +69,7 @@ program define pyforest_setup
 	if _rc!=0 {
 		di in gr "    Trying to install automatically with Python subprocess call to pip (user directory install)..."
 		sleep 300
-		cap python: install2("`python_path'","pandas")
+		python: install2("`python_path'","pandas")
 	}
 
 	* Auto install method 3: Shell call with python -m to identify pip version
@@ -251,7 +251,11 @@ python:
 
 def install(python_path, package):
 	import subprocess, sys
-	subprocess.check_call([python_path, "-m", "pip", "install", package])
+	try:
+		subprocess.check_call([python_path, "-m", "pip", "install", package])
+		print("testing this too")
+	except subprocess.CalledProcessError:
+		print("test error message")
 	
 def install2(python_path, package):
 	import subprocess, sys
