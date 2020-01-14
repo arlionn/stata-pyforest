@@ -59,7 +59,7 @@ program define pyforest_setup
 	* Auto install method 1: Python subprocess call
 	cap python which pandas
 	if _rc!=0 {
-		di in gr "    Trying to install automatically..."
+		di in gr "    Trying to install automatically with pip..."
 		sleep 300
 		python: install("`python_path'","pandas")
 	}
@@ -67,7 +67,7 @@ program define pyforest_setup
 	* Auto install method 2: Python subprocess call (user directory)
 	cap python which pandas
 	if _rc!=0 {
-		di in gr "    Trying to install automatically (user directory)..."
+		di in gr "    Trying to install automatically with pip (user directory)..."
 		sleep 300
 		python: install_user("`python_path'","pandas")
 	}
@@ -75,7 +75,7 @@ program define pyforest_setup
 	* If we still do not have pandas installed, display error.
 	cap python which pandas
 	if _rc!=0 {
-		di as error "  Error: Could not install pandas automatically. You will need to install it manually."
+		di as error "  Error: Could not install pandas automatically. You may need to install it manually."
 		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
 		exit 1
 	}
@@ -103,7 +103,7 @@ program define pyforest_setup
 	* Auto install method 1: Python subprocess call
 	cap python which numpy
 	if _rc!=0 {
-		di in gr "    Trying to install automatically..."
+		di in gr "    Trying to install automatically with pip..."
 		sleep 300
 		python: install("`python_path'","numpy")
 	}
@@ -111,14 +111,14 @@ program define pyforest_setup
 	* Auto install method 2: Python subprocess call (user directory)
 	cap python which numpy
 	if _rc!=0 {
-		di in gr "    Trying to install automatically (user directory)..."
+		di in gr "    Trying to install automatically with pip (user directory)..."
 		sleep 300
 		python: install_user("`python_path'","numpy")
 	}
 	
 	cap python which numpy
 	if _rc!=0 {
-		di as error "  Error: Could not install numpy automatically. You will need to install it manually."
+		di as error "  Error: Could not install numpy automatically. You may need to install it manually."
 		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
 		exit 1
 	}
@@ -146,9 +146,9 @@ program define pyforest_setup
 	* Auto install method 1: Python subprocess call
 	cap python which sklearn
 	if _rc!=0 {
-		di in gr "    Trying to install automatically..."
+		di in gr "    Trying to install automatically with pip..."
 		sleep 300
-		python: install("`python_path'","scikit-learn")
+		python: install("`python_path'","sklearn")
 	}
 	
 	* Auto install method 2: Python subprocess call (user directory)
@@ -156,12 +156,12 @@ program define pyforest_setup
 	if _rc!=0 {
 		di in gr "    Trying to install automatically (user directory)..."
 		sleep 300
-		python: install_user("`python_path'","scikit-learn")
+		python: install_user("`python_path'","sklearn")
 	}
 	
 	cap python which sklearn
 	if _rc!=0 {
-		di as error "  Error: Could not install scikit-learn automatically. You will need to install it manually."
+		di as error "  Error: Could not install scikit-learn automatically. You may need to install it manually."
 		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
 		exit 1
 	}
@@ -208,10 +208,6 @@ def install(python_path, package):
 		subprocess.check_call([python_path, "-m", "pip", "install", package])
 	except subprocess.CalledProcessError:
 		failed = 1
-	if failed==0:
-		print("    Failed to install automatically.")
-	else:
-		print("    Installed successfully!")
 
 def install_user(python_path, package):
 	import subprocess
@@ -220,9 +216,5 @@ def install_user(python_path, package):
 		subprocess.check_call([python_path, "-m", "pip", "install", "--user", package])
 	except subprocess.CalledProcessError:
 		failed = 1
-	if failed==0:
-		print("    Failed to install automatically.")
-	else:
-		print("    Installed successfully!")
 	
 end
