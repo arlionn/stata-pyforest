@@ -1,4 +1,4 @@
 
-v 0.21
+v 0.22
 d Michael Droste, thedroste@gmail.com
 p 'pyforest': stata implementation of random forests

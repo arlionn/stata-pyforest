@@ -28,7 +28,7 @@ program define pyforest_setup
 	local python_path = subinstr("`python_path'","\","/",.)
 	if "`python_path'"!="" {
 		di in gr "  Compatible Python installation found!"
-		di in gr "  Path to installation: `python_path'"
+		di in gr "  Location of Python executable: `python_path'"
 		di in gr "  Python version: `python_vers'"
 	}
 	if "`python_path'"=="" {
