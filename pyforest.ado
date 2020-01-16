@@ -168,7 +168,7 @@ if "`min_weight_fraction_leaf'"=="" local min_weight_fraction_leaf 0
 local max_features_di `max_features'
 if "`max_features'"=="" {
 	local max_features "auto"
-	local max_features_di "None (default)"
+	local max_features_di "None"
 }
 * if not sqrt or log2, then should be float
 if ~inlist("`max_features'","auto","sqrt","log2") {
@@ -331,7 +331,7 @@ local training_di `training'
 tempvar training_var
 if "`training'"=="" {
 	gen `training_var' = 1
-	local training_di "None (all obs used)"
+	local training_di "None"
 }
 if "`training'"!="" gen `training_var' = `training'
 
@@ -339,8 +339,8 @@ if "`training'"!="" gen `training_var' = `training'
 qui count if `training_var'==1
 local num_obs_train = `r(N)'
 qui count
-local num_obs_val = `r(N)' - `num_obs_train'
-local nonempty_test = `num_obs_val'>0
+local num_obs_test = `r(N)' - `num_obs_train'
+local nonempty_test = `num_obs_test'>0
 
 *-------------------------------------------------------------------------------
 * Format strings and display text box
@@ -375,51 +375,60 @@ python: run_random_forest( ///
 	`importance', `nonempty_test')
 	
 * xx move me
-if "`prediction'"=="" local prediction_di "prediction() not specified. Use -{help predict:predict}- for post-estimation predictions.""
+if "`prediction'"=="" local prediction_di "Not specified. Use {help predict:predict} for post-estimation predictions.""
 if "`prediction'"!="" local prediction_di "`prediction'"
-if "`random_state'"=="None" local seed_di "Not set"
+if "`random_state'"=="None" local seed_di "None"
 if "`random_state'"!="None" local seed_di `random_state'
+
+* xx move me 2
+local is_rmse: di %10.4f `e(training_rmse)'
+local is_mae: di %10.4f `e(training_mae)'
+local os_rmse: di %10.4f `e(test_rmse)'
+local os_mae: di %10.4f `e(test_mae)'
+local train_obs_f: di %10.0fc `num_obs_train'
+local test_obs_f: di %10.0fc `num_obs_test'
 
 * Display output
 noi di "{hline 80}"
 noi di in ye "Random forest `type_str'"
 noi di " "
 noi di in gr "{ul:Data}"
-noi di in gr "Dependent variable    = " in ye "`yvar'" _continue
-noi di in gr _col(50) "Number of obs         = " in ye `num_obs_train'
-noi di in gr "Training identifier   = " in ye "`training_di'" _continue
-noi di in gr _col(50) "Number of features    = " in ye `num_features'
+noi di in gr "Dependent variable  = " in ye "`yvar'" _continue
+noi di in gr _col(41) "Number of training obs   = " in ye `train_obs_f'
+noi di in gr "Number of features  = " in ye `num_features' _continue
+noi di in gr _col(41) "Number of validation obs = " in ye `test_obs_f'
+noi di in gr "Training identifier = " in ye "`training_di'"
 noi di " "
 noi di in gr "{ul:Random forest settings}"
-noi di in gr "Number of trees       = " in ye "`n_estimators'" 
-noi di in gr "Max tree depth        = " in ye "`max_depth'" _continue
-noi di in gr _col(50) "Min obs/leaf          = " in ye "`min_samples_leaf'"
-noi di in gr "Max features/tree     = " in ye "`max_features_di'" _continue
-noi di in gr _col(50) "Min obs/int node      = " in ye "`min_samples_split'"
-noi di in gr "Max leaf nodes        = " in ye "`max_leaf_nodes'" _continue
-noi di in gr _col(50) "Min wt frac/leaf      = " in ye "`min_weight_fraction_leaf'"
-noi di in gr "Splitting criterion   = " in ye "`criterion'" _continue
-noi di in gr _col(50) "Min impurity decrease = " in ye "`min_impurity_decrease'"
-noi di in gr "Seed for RNG          = " in ye "`seed_di'"
+noi di in gr "Number of trees     = " in ye "`n_estimators'" 
+noi di in gr "Max tree depth      = " in ye "`max_depth'" _continue
+noi di in gr _col(41) "Min obs/leaf              = " in ye "`min_samples_leaf'"
+noi di in gr "Max features/tree   = " in ye "`max_features_di'" _continue
+noi di in gr _col(41) "Min obs/interior node     = " in ye "`min_samples_split'"
+noi di in gr "Max leaf nodes      = " in ye "`max_leaf_nodes'" _continue
+noi di in gr _col(41) "Min weight fraction/leaf  = " in ye "`min_weight_fraction_leaf'"
+noi di in gr "Split criterion     = " in ye "`criterion'" _continue
+noi di in gr _col(41) "Min impurity decrease     = " in ye "`min_impurity_decrease'"
+noi di in gr "Random number seed  = " in ye "`seed_di'"
 noi di " "
 noi di in gr "{ul:Output}"
 noi di in gr "Prediction: " in ye "`prediction_di'"
 if "`type'"=="regress" {
-	noi di in gr "In-sample RMSE: `e(training_rmse)'"
-	noi di in gr "In-sample MAE: `e(training_mae)'"
+	noi di in gr "Training RMSE       = " in ye `is_rmse'
+	noi di in gr "Training MAE        = " in ye `is_mae'
 }
 if "`type'"=="classify" {
-	noi di in gr "In-sample classification accuracy: `e(training_accuracy)'"
+	noi di in gr "Training accuracy   = " in ye `e(training_accuracy)'
 }
 if "`type'"=="regress" & `nonempty_test'==1 {
-	noi di in gr "Out of sample RMSE: `e(test_rmse)'"
-	noi di in gr "Out of sample MAE: `e(test_mae)'"
+	noi di in gr "Validation RMSE     = " in ye `os_rmse'
+	noi di in gr "Validation MAE      = " in ye `os_mae'
 }
 if "`type'"=="classify" & `nonempty_test'==1 {
-	noi di in gr "Out of sample classification accuracy: `e(test_accuracy)'"
+	noi di in gr "Validation accuracy = " in ye `e(test_accuracy)'
 }
 noi di " "
-noi di in gr "For help, see the pyforest internal documentation by typing {help pyforest:help pyforest}"
+noi di in gr "Type {help pyforest:help pyforest} to access the pyforest documentation."
 noi di "{hline 80}"
 
 	
