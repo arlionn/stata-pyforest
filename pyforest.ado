@@ -481,8 +481,12 @@ from sfi import Data,Matrix,Scalar
 from sklearn import metrics
 import numpy as np
 
-# XX test passing object to main
+# To pass objects to Stata
 import __main__
+
+# Set random seed
+import random
+random.seed(50)
 
 #-------------------------------------------------------------------------------
 # Define Python function: run_random_forest
@@ -555,8 +559,8 @@ def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_spl
 	
 	# If nonempty test sample, get out of sample stats
 	if type=="regress" and nonempty_test==1:
-		print("INSIDE")
-		print(nonempty_test)
+		# print("INSIDE")
+		# print(nonempty_test)
 		pred_outsample = rf.predict(df_test[features])
 		y_outsample = df_test[y]
 		outsample_mae = metrics.mean_absolute_error(y_outsample, pred_outsample)
