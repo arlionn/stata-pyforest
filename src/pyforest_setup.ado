@@ -55,7 +55,7 @@ if _rc != 0 {
 	di in gr "  Trying to install now."
 	cd "`c(sysdir_plus)'"
 	copy "https://bootstrap.pypa.io/get-pip.py" get-pip.py, replace
-	shell `python_path' -m get-pip.py
+	shell `python_path' get-pip.py
 	di in gr "  Installed pip. 
 	di in gr "  Please close all instances of Stata to proceed, and then run pyforest_setup again."
 }
