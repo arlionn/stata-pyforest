@@ -53,7 +53,8 @@ if _rc == 0 {
 if _rc != 0 {
 	di in gr "  Warning: Could not find the module pip."
 	di in gr "  Trying to install now."
-	copy "https://bootstrap.pypa.io/get-pip.py" ~/get-pip.py
+	cd "`c(sysdir_plus)'"
+	copy "https://bootstrap.pypa.io/get-pip.py" get-pip.py, replace
 	shell `python_path' -m get-pip.py
 	di in gr "  Installed pip. 
 	di in gr "  Please close all instances of Stata to proceed, and then run pyforest_setup again."
