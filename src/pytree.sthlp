@@ -25,11 +25,8 @@
  
 {syntab :Main}
 {synopt :{opt type(string)}}{it:string} may be {bf:regress} or {bf:classify}.{p_end}
-
-{syntab :Training options}
-{synopt :{opt training(varname)}}varname is an indicator for the training sample (if unspecified, all observations used){p_end}
  
-{syntab :Decision tree options (model hyper-parameters)}
+{syntab :Decision tree options (hyper-parameters)}
 {synopt :{opt criterion(string)}}Criterion for splitting nodes (see details below){p_end}
 {synopt :{opt max_depth(#)}}Maximum tree depth{p_end}
 {synopt :{opt min_samples_split(#)}}Minimum observations per node{p_end}
@@ -37,6 +34,9 @@
 {synopt :{opt max_features(numeric)}}Maximum number of features to consider per tree{p_end}
 {synopt :{opt max_leaf_nodes(#)}}Maximum leaf nodes{p_end}
 {synopt :{opt min_impurity_decrease(#)}}Propensity to split{p_end}
+
+{syntab :Training options}
+{synopt :{opt training(varname)}}varname is an indicator for the training sample{p_end}
 
 {syntab :Output options}
 {synopt :{opt prediction(newvar)}}Save prediction as {bf: newvar}{p_end}
@@ -114,12 +114,24 @@
 {pstd}See the Github page.{p_end}
 
 {pstd}Example 1: Classification with decision trees, saivng predictions as a new variable called iris_prediction{p_end}
-{phang2}. {stata sysuse iris, clear}{p_end}
-{phang2}. {stata pytree iris seplen sepwid petlen petwid, type(classify) save_prediction(iris_predicted)}{p_end}
+{phang2} Load data{p_end}
+{phang2}. {stata webuse iris, clear}{p_end}
+{phang2} Run decision tree classifier{p_end}
+{phang2}. {stata pytree iris seplen sepwid petlen petwid, type(classify)}{p_end}
+{phang2} Save predictions in a variable called iris_hat{p_end}
+{phang2}. {stata predict iris_hat}{p_end}
 
 {pstd}Example 2: Classification with decision trees, evaluating on a random subset of the data{p_end}
-{phang2}. {stata sysuse iris, clear}{p_end}
-{phang2}. {stata pytree iris seplen sepwid petlen petwid, type(classify) training(training_flag) save_prediction(iris_predicted) max_depth(2)}{p_end}
+{phang2} Load data{p_end}
+{phang2}. {stata webuse iris, clear}{p_end}
+{phang2} Train on about 3/4 of obs{p_end}
+{phang2}. {stata gen train_flag = runiform()<0.75}{p_end}
+{phang2} Run decision tree classifier, training on training sample{p_end}
+{phang2}. {stata pytree iris seplen sepwid petlen petwid if train_flag==1, type(classify)}{p_end}
+{phang2} Alternative syntax for the above: we can use training() and obtain test sample RMSE in one step{p_end}
+{phang2}. {stata pytree iris seplen sepwid petlen petwid, type(classify) training(train_flag)}{p_end}
+{phang2} Save predictions in a variable called iris_hat{p_end}
+{phang2}. {stata predict iris_hat}{p_end}
  
 {marker author}{...}
 {title:Author}

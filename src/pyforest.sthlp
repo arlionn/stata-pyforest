@@ -26,9 +26,6 @@
 {syntab :Main}
 {synopt :{opt type(string)}}{it:string} may be {bf:regress} or {bf:classify}.{p_end}
 
-{syntab :Training options}
-{synopt :{opt training(varname)}}varname is an indicator for the training sample (if unspecified, all observations used){p_end}
- 
 {syntab :Random forest options}
 {synopt :{opt n_estimators(#)}}Number of trees{p_end}
 {synopt :{opt criterion(string)}}Criterion for splitting nodes (see details below){p_end}
@@ -39,20 +36,18 @@
 {synopt :{opt max_leaf_nodes(#)}}Maximum leaf nodes{p_end}
 {synopt :{opt min_impurity_decrease(#)}}Propensity to split{p_end}
 {synopt :{opt nobootstrap}}Do not bootstrap observations for each tree{p_end}
-{synopt :{opt verbose}}Controls verbosity of output{p_end}
-{synopt :{opt class_weight}}Not yet implemented{p_end}
+
+{syntab :Training options}
+{synopt :{opt training(varname)}}varname is an indicator for the training sample{p_end}
 
 {syntab :Output options}
 {synopt :{opt prediction(newvar)}}Save prediction as {bf: newvar}{p_end}
-{synopt :{opt training(newvar)}}Save indicator for training sample as {bf: newvar}{p_end}
 
 {syntab :Miscellaneous options}
 {synopt :{opt n_jobs(#)}}Number of cores to use when processing data{p_end}
 
 {synoptline}
 {p 4 6 2}
-{opt aweight}s are allowed;
-see {help weight}.
 {p_end}
  
  
@@ -75,17 +70,6 @@ see {help weight}.
  
 {phang}
 {opth type(string)} declares whether this is a regression or classification problem. In general, type(classify) is more appropriate when the dependent variable is categorical, and type(regression) is more appropriate when the dependent variable is continuous.
- 
-{dlgtab:Training data options}
- 
-{phang}
-{opt frac_training(float)} determines the fraction of observations to be randomly sampled for the training dataset. Note that frac_training should be in (0,1]. By default, this is 0.5.
-
-{phang}
-{opt training_stratify(varname)} identifies a variable for the level at which the training data is subsampled from. 
-
-{phang}
-{opt training_identifier(varname)} identifies an indicator variable in the current dataset that is equal to 1 when an observation should be used for training and 0 otherwise. If this option is specified, frac_training() and training_stratify() are ignored.
 
 {dlgtab:Random forest options}
  
@@ -119,6 +103,12 @@ see {help weight}.
 {phang}
 {opt nobootstrap} determines whether bootstrapped samples are used when building trees. If this option is specified, no bootstrapped samples are used, i.e. the whole dataset is used for each tree. By default, each tree uses data that is bootstrapped with replacement (same # of obs) from the original data.
 
+{dlgtab:Training data options}
+
+{phang}
+{opt training(varname)} identifies an indicator variable in the current dataset that is equal to 1 when an observation should be used for training and 0 otherwise. 
+
+
 {dlgtab:Save Output}
  
 {phang}
@@ -133,13 +123,25 @@ see {help weight}.
  
 {pstd}See the Github page.{p_end}
 
-{pstd}Example 1: Classification with random forests{p_end}
-{phang2}. {stata sysuse iris, clear}{p_end}
-{phang2}. {stata pyforest iris seplen sepwid petlen petwid, type(classify) save_prediction(iris_predicted)}{p_end}
+{pstd}Example 1: Classification with random forests, saivng predictions as a new variable called iris_prediction{p_end}
+{phang2} Load data{p_end}
+{phang2}. {stata webuse iris, clear}{p_end}
+{phang2} Run random forest classifier{p_end}
+{phang2}. {stata pyforest iris seplen sepwid petlen petwid, type(classify)}{p_end}
+{phang2} Save predictions in a variable called iris_hat{p_end}
+{phang2}. {stata predict iris_hat}{p_end}
 
-{pstd}Example 2: Classification with random forests, more options{p_end}
-{phang2}. {stata sysuse iris, clear}{p_end}
-{phang2}. {stata pyforest iris seplen sepwid petlen petwid, type(classify) frac_training(0.3) save_prediction(iris_predicted) save_training(training_sample) criterion(entropy)}{p_end}
+{pstd}Example 2: Classification with random forests, evaluating on a random subset of the data{p_end}
+{phang2} Load data{p_end}
+{phang2}. {stata webuse iris, clear}{p_end}
+{phang2} Train on about 3/4 of obs{p_end}
+{phang2}. {stata gen train_flag = runiform()<0.75}{p_end}
+{phang2} Run random forest classifier, training on training sample{p_end}
+{phang2}. {stata pyforest iris seplen sepwid petlen petwid if train_flag==1, type(classify)}{p_end}
+{phang2} Alternative syntax for the above: we can use training() and obtain test sample RMSE in one step{p_end}
+{phang2}. {stata pyforest iris seplen sepwid petlen petwid, type(classify) training(train_flag)}{p_end}
+{phang2} Save predictions in a variable called iris_hat{p_end}
+{phang2}. {stata predict iris_hat}{p_end}
  
 {marker author}{...}
 {title:Author}
