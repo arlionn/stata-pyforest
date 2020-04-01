@@ -66,10 +66,12 @@ python:
 
 def post_prediction(vars, prediction):
 
-	# Import random forest object data from main namespace
-	from __main__ import rf_object as rf
+	# Import things from namespace
+	from __main__ import model_object as model
+
+	# Load other requisite libraries
 	from pandas import DataFrame
-	from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
+	from sklearn.tree import DecisionTreeClassifier,DecisionTreeRegressor
 	from sfi import Data,Matrix
 	
 	# Load data into Pandas data frame
@@ -83,7 +85,7 @@ def post_prediction(vars, prediction):
 	features = df.columns[0:]
 	
 	# Generate predictions (on both training and test data)
-	pred    = rf.predict(df[features])
+	pred    = model.predict(df[features])
 	
 	# Export predictions back to Stata
    	Data.addVarFloat(prediction)
