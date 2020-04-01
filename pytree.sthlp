@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.20 14jan2020}{...}
+{* *! version 0.25 29mar2020}{...}
 {viewerjumpto "Syntax" "pytree##syntax"}{...}
 {viewerjumpto "Description" "pytree##description"}{...}
 {viewerjumpto "Options" "pytree##options"}{...}
@@ -29,7 +29,7 @@
 {syntab :Training options}
 {synopt :{opt training(varname)}}varname is an indicator for the training sample (if unspecified, all observations used){p_end}
  
-{syntab :Random forest options}
+{syntab :Decision tree options (model hyper-parameters)}
 {synopt :{opt criterion(string)}}Criterion for splitting nodes (see details below){p_end}
 {synopt :{opt max_depth(#)}}Maximum tree depth{p_end}
 {synopt :{opt min_samples_split(#)}}Minimum observations per node{p_end}
@@ -57,7 +57,7 @@ see {help weight}.
 
 {pstd} In particular, {opt pytree} implements decision trees using Python's scikit-learn module; specifically, the decisionTreeClassifier decisionTreeRegression methods.
 
-{pstd} {opt pytree} relies critically on the Python integration functionality introduced with Stata 16. Therefore, users will need Stata 16, Python (preferably 3.x), and the scikit-learn library installed in order to run.
+{pstd} Note that {opt pytree} relies on the Python integration functionality introduced with Stata 16. Therefore, users will need Stata 16, Python (preferably 3.x), and the scikit-learn library installed in order to run this ado-file.
 
  
  
