@@ -1,4 +1,4 @@
 
-v 0.27
+v 0.30
 d Michael Droste, thedroste@gmail.com
 p 'pyforest': decision trees and random forests in stata
