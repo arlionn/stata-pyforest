@@ -18,11 +18,15 @@ The easiest way to install the Python prerequisites is to install Anaconda. Anac
 2. Follow the directions on the installer. Install for 'Just me' rather than 'All users'. 
    *Write down the install path, as shown in the figure below*. 
 
-![anaconda install path](docs/images/fig1.png "install fig1")
+<p align="center">
+![install fig1](docs/images/fig1.png "install fig1")
+</p>
 
 3. Close any open Stata windows you might have and open a new one. Type "python query" to see if Stata automatically recognizes your Python installation.
 
-![anaconda install path](docs/images/fig2.png "install fig2")
+<p align="center">
+![install fig2](docs/images/fig2.png "install fig2")
+</p>
 
 4. If the install path from step (2) is listed in this Stata output, as shown above you're done! Please refer to the built-in documentation for usage examples.
 
