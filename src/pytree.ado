@@ -14,7 +14,6 @@ version 16.0
 syntax varlist(min=2) [if] [in] [aweight fweight], ///
 [ ///
 	type(string asis)            	 /// random forest type: classifier or regressor
-	n_estimators(integer 1) 	 	 /// number of trees
 	criterion(string asis) 	 	 	 /// split criterion (gini, entropy)
 	max_depth(integer -1)	 	 	 /// max tree depth
 	min_samples_split(real 2) 	 	 /// min obs before splitting internal node
@@ -23,14 +22,9 @@ syntax varlist(min=2) [if] [in] [aweight fweight], ///
 	max_features(string asis)	 	 /// number of features to consider for best split
 	max_leaf_nodes(real -1)	 	 	 /// max leaf nodes
 	min_impurity_decrease(real 0)	 /// split if it induces this amt decrease in impurity
-	nobootstrap 		 		 	 /// use bootstrap or not
-	oob_score 		 		 	 	 /// whether to use out-of-bag obs to estimate generalization accuracy
 	n_jobs(integer -1)		 	 	 /// number of processors to use when computing stuff - default is all
 	random_state(integer -1) 	 	 /// seed used by random number generator
-	verbose		 			 	 	 /// controls verbosity
-	warm_start(string asis)	 	 	 /// when set to true, reuse solution of previous call to fit
 	class_weight 			 	 	 /// XX NOT YET IMPLEMENTED
-    frac_training(real 1)	 	 	 /// randomly assign fraction X to training
     training(varname) 	             /// training dataset identifier
 	prediction(string asis) 	     /// variable name to save predictions
 	standardize                  	 /// standardize feature variance XX NOT YET IMPLEMENTED
@@ -86,16 +80,6 @@ if _rc!=0 {
 *-------------------------------------------------------------------------------
 * Handle arguments
 *-------------------------------------------------------------------------------
-
-*-------------------------------------------------
-* n_estimators: positive integer (default: 10)
-*-------------------------------------------------
-
-if `n_estimators'>1 {
-	di as error "Syntax error: Number of estimators in a decision tree needs to be 1."
-	di as error "Use the program pyforest, not pytree, to use this option."
-	exit 1
-}
 
 *-------------------------------------------------
 * type: string asis, either classify or regress
@@ -205,33 +189,6 @@ if "`max_leaf_nodes'"!="None" {
 
 if "`min_impurity_decrease'"=="" local min_impurity_decrease 0
 
-*-------------------------------------------------
-* nobootstrap: whether or not to bootstrap samples in each tree
-*-------------------------------------------------
-
-if "`nobootstrap'"!="" {
-    di as error "Error: nobootstrap option cannot be applied to decision tree."
-	di as error "You probably mean to use the program pyforest, not pytree."
-	exit 1
-}
-
-local bootstrap False
-
-*-------------------------------------------------
-* oob_score: xx not yet implemented
-*-------------------------------------------------
-
-if "`oob_score'"=="" local oob_score False
-
-*-------------------------------------------------
-* n_jobs: number of processors to use in computing random forests
-if "`n_jobs'"=="" local n_jobs -1
-if `n_jobs'<1 & `n_jobs'!=-1 {
-	di as error "Syntax error: num_jobs() must be positive integer or -1."
-	di as error " num_jobs() specifies number of processors to use; the default -1 means all."
-	di as error " If not -1, this has to be a positive integer. But you should probably not mess around with this."
-	exit 1
-}
 
 *-------------------------------------------------
 * random_state: initialize random number generator
@@ -246,18 +203,6 @@ if "`random_state'"!="" & "`random_state'"!="None" {
 	set seed `random_state'
 	local random_state `random_state'
 }
-
-*-------------------------------------------------
-* verbose: control verbosity of python output
-*-------------------------------------------------
-
-if "`verbose'"=="" local verbose 0
-
-*-------------------------------------------------
-* warm_start: Unsupported scikit-learn option used to use pre-existing rf object 
-*-------------------------------------------------
-
-if "`warm_start'"=="" local warm_start False
 
 *-------------------------------------------------
 * class_weight: xx not yet implemented
@@ -416,7 +361,6 @@ noi di in gr "Max leaf nodes      = " in ye "`max_leaf_nodes'" _continue
 noi di in gr _col(41) "Min weight fraction/leaf  = " in ye "`min_weight_fraction_leaf'"
 noi di in gr "Split criterion     = " in ye "`criterion'" _continue
 noi di in gr _col(41) "Min impurity decrease     = " in ye "`min_impurity_decrease'"
-noi di in gr "Random number seed  = " in ye "`seed_di'"
 noi di " "
 noi di in gr "{ul:Output}"
 noi di in gr "Prediction: " in ye "`prediction_di'"
