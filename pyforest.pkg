@@ -1,10 +1,15 @@
-v 0.24
+v 0.25
 d
-d 'pyforest': random forests in stata
+d 'pyforest': decision trees and random forests in stata
 d
-d Distribution-Date: 20200328
+d Distribution-Date: 20200329
 d
 f pyforest.ado
 f pyforest_p.ado
 f pyforest_setup.ado
+f pytree.ado
+f pytree_p.ado
+f pytree_d.ado
+f pytree_save.ado
 f pyforest.sthlp
+f pytree.sthlp

@@ -1,14 +1,14 @@
 *===============================================================================
-* FILE: pyforest_p.ado
+* FILE: pytree_p.ado
 * PURPOSE: Enables post-estimation -predict- command to obtain fitted values
-*   from pyforest.ado (random forest regression/classification with scikit-learn)
-* SEE ALSO: pyforest.ado
+*   from pytree.ado (decision tree regression/classification with scikit-learn)
+* SEE ALSO: pytree.ado
 * AUTHOR: Michael Droste
 *===============================================================================
 
-program define pyforest_p, eclass
+program define pytree_p, eclass
 	version 16.0
-	syntax anything(id="argument name" name=arg) [if] [in], [pr]
+	syntax anything(id="argument name" name=arg) [if] [in], [pr xb]
 	
 	* Mark sample with if/in
 	marksample touse, novarlist
@@ -23,7 +23,7 @@ program define pyforest_p, eclass
 	* Define locals prediction, features
 	local predict_var "`arg'"
 	local features "${features}"
-	
+
 	* Check to see if variable exists
 	cap confirm new variable `predict_var'
 	if _rc>0 {
@@ -58,7 +58,6 @@ program define pyforest_p, eclass
 	* Load original dataset, merge prediction on
 	qui use `t1', clear
 	qui merge 1:1 `temp_index' using `t2', nogen
-	
 	
 	
 end

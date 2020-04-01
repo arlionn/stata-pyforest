@@ -1,6 +1,6 @@
 *===============================================================================
 * Program:   pytree.ado
-* Purpose:   Stata wrapper for decosopmt ree classification and regression
+* Purpose:   Stata wrapper for decision tree classification and regression
 *            with scikit-learn in Python, using Stata 16's new built-in Python
 *            integration functions.
 * More info: www.github.com/mdroste/stata-pyforest
@@ -464,7 +464,7 @@ if "`needs_encoding'"=="yes" {
 
 * Return stuff to e class
 *ereturn matrix importance = temp1e
-ereturn local predict "pyforest_p"
+ereturn local predict "pytree_p"
 global features "`xvars'"
 
 ereturn local pytree_display "pytree_d"
