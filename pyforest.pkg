@@ -1,8 +1,8 @@
-v 0.26
+v 0.27
 d
 d 'pyforest': decision trees and random forests in stata
 d
-d Distribution-Date: 20200329
+d Distribution-Date: 20200330
 d
 f src/pyforest.ado
 f src/pyforest_p.ado
