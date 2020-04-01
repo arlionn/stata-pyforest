@@ -358,10 +358,9 @@ if "`type'"=="regress" local type_str "regression"
 if "`type'"=="classify" local type_str "classification"
 
 * Pass options to Python to import data, run random forest regression, return results
-python: run_random_forest( ///
+python: run_decision_tree( ///
 	"`type'", ///
 	"`training_var' `yvar2' `xvars'", ///
-	`n_estimators', ///
 	"`criterion'", ///
 	`max_depth', ///
 	`min_samples_split', ///
@@ -370,12 +369,7 @@ python: run_random_forest( ///
 	`max_features', ///
 	`max_leaf_nodes', ///
 	`min_impurity_decrease', ///
-	`bootstrap', ///
-	`oob_score', ///
-	`n_jobs', ///
 	`random_state', ///
-	`verbose', ///
-	`warm_start', ///
 	`class_weight', ///
 	"`prediction'", ///
 	"`training_var'", ///
@@ -395,12 +389,19 @@ local os_mae: di %10.4f `e(test_mae)'
 local train_obs_f: di %10.0fc `num_obs_train'
 local test_obs_f: di %10.0fc `num_obs_test'
 
+* xx move me 3: truncate dependent var name
+local yvarlen = length("`yvar'")
+local yvar_fmt = "`yvar'"
+if `yvarlen'>13 {
+	local yvar_fmt = substr("`yvar'",1,13) + "..."
+}
+
 * Display output
 noi di "{hline 80}"
 noi di in ye "Decision tree `type_str'"
 noi di " "
 noi di in gr "{ul:Data}"
-noi di in gr "Dependent variable  = " in ye "`yvar'" _continue
+noi di in gr "Dependent variable  = " in ye "`yvar_fmt'" _continue
 noi di in gr _col(41) "Number of training obs   = " in ye `train_obs_f'
 noi di in gr "Number of features  = " in ye `num_features' _continue
 noi di in gr _col(41) "Number of validation obs = " in ye `test_obs_f'
@@ -421,14 +422,14 @@ noi di in gr "{ul:Output}"
 noi di in gr "Prediction: " in ye "`prediction_di'"
 if "`type'"=="regress" {
 	noi di in gr "Training RMSE       = " in ye `is_rmse'
-	noi di in gr "Training MAE        = " in ye `is_mae'
+	*noi di in gr "Training MAE        = " in ye `is_mae'
 }
 if "`type'"=="classify" {
 	noi di in gr "Training accuracy   = " in ye `e(training_accuracy)'
 }
 if "`type'"=="regress" & `nonempty_test'==1 {
 	noi di in gr "Validation RMSE     = " in ye `os_rmse'
-	noi di in gr "Validation MAE      = " in ye `os_mae'
+	*noi di in gr "Validation MAE      = " in ye `os_mae'
 }
 if "`type'"=="classify" & `nonempty_test'==1 {
 	noi di in gr "Validation accuracy = " in ye `e(test_accuracy)'
@@ -488,7 +489,7 @@ python:
 
 # Import required Python modules (pandas, scikit-learn, sfi)
 from pandas import DataFrame
-from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
+from sklearn.tree import DecisionTreeClassifier,DecisionTreeRegressor
 from sfi import Data,Matrix,Scalar
 from sklearn import metrics
 import numpy as np
@@ -504,7 +505,22 @@ random.seed(50)
 # Define Python function: run_random_forest
 #-------------------------------------------------------------------------------
 
-def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_split,min_samples_leaf,min_weight_fraction_leaf,max_features,max_leaf_nodes,min_impurity_decrease,bootstrap,oob_score,n_jobs,random_state,verbose,warm_start,class_weight,prediction,training,importance,nonempty_test):
+def run_decision_tree(type,
+					 vars,
+					 criterion,
+					 max_depth,
+					 min_samples_split,
+					 min_samples_leaf,
+					 min_weight_fraction_leaf,
+					 max_features,
+					 max_leaf_nodes,
+					 min_impurity_decrease,
+					 random_state,
+					 class_weight,
+					 prediction,
+					 training,
+					 importance,
+					 nonempty_test):
 
 	#-----------------------------------
 	# Load data from Stata into Python
@@ -525,25 +541,41 @@ def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_spl
 	y        = df.columns[1]
 	
 	#-----------------------------------
-	# Run random forest model
+	# Run decision tree model model
 	#-----------------------------------
 	
-    # Initialize random forest regressor (if model type is regress)
+    # Initialize decision tree regressor (if model type is regress)
 	if type=="regress":
-		rf = RandomForestRegressor(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth, min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf, min_weight_fraction_leaf=min_weight_fraction_leaf, max_features=max_features, max_leaf_nodes=max_leaf_nodes, min_impurity_decrease=min_impurity_decrease, bootstrap=bootstrap, oob_score=oob_score, n_jobs=n_jobs, random_state=random_state, verbose=verbose, warm_start=warm_start)
+		model = DecisionTreeRegressor(criterion=criterion, 
+								  max_depth=max_depth,
+								  min_samples_split=min_samples_split, 
+								  min_samples_leaf=min_samples_leaf, 
+								  min_weight_fraction_leaf=min_weight_fraction_leaf, 
+								  max_features=max_features, 
+								  max_leaf_nodes=max_leaf_nodes, 
+								  min_impurity_decrease=min_impurity_decrease, 
+								  random_state=random_state)
 
-	# Initialize random forest classifier (if model type is classify)
+	# Initialize decision tree classifier (if model type is classify)
 	if type=="classify":
-		rf = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth, min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf, min_weight_fraction_leaf=min_weight_fraction_leaf, max_features=max_features, max_leaf_nodes=max_leaf_nodes, min_impurity_decrease=min_impurity_decrease, bootstrap=bootstrap, oob_score=oob_score, n_jobs=n_jobs, random_state=random_state, verbose=verbose, warm_start=warm_start)
+		model = DecisionTreeClassifier(criterion=criterion, 
+								   max_depth=max_depth, 
+								   min_samples_split=min_samples_split, 
+								   min_samples_leaf=min_samples_leaf, 
+								   min_weight_fraction_leaf=min_weight_fraction_leaf, 
+								   max_features=max_features, 
+								   max_leaf_nodes=max_leaf_nodes, 
+								   min_impurity_decrease=min_impurity_decrease, 
+								   random_state=random_state)
 
-    # Run random forest model on training data
-	rf.fit(df_train[features], df_train[y])
+    # Run decision tree model on training data
+	tree = model.fit(df_train[features], df_train[y])
 	
 	# Pass random forest model back to __main__ namespace to interact w/ later
-	__main__.rf_object = rf
+	__main__.model_object = model
 	
 	# Pass tree back for display later
-	__main__.tree = rf.estimators_[0]
+	__main__.tree = tree
 	
 	# Pass feature names back for access later
 	__main__.features = features
@@ -551,12 +583,12 @@ def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_spl
 	# XX MAKE THESE LINES TRIGGER ONLY IF SAVE_PREDICTIONS USED
 	# Generate predictions (on both training and test data)
 	if prediction!="":
-		pred    = rf.predict(df[features])
+		pred    = model.predict(df[features])
 		Data.addVarFloat(prediction)
 		Data.store(prediction,None,pred)
 		
 	# Get in-sample prediction and in-sample prediction accuracy
-	pred_insample = rf.predict(df_train[features])
+	pred_insample = model.predict(df_train[features])
 	y_insample = df_train[y]
 	
 	
@@ -574,11 +606,10 @@ def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_spl
 		insample_accuracy = metrics.accuracy_score(y_insample, pred_insample)
 		Scalar.setValue("e(training_accuracy)", insample_accuracy, vtype='visible')
 		
-	
 	# If nonempty test sample, get out of sample stats
 	if type=="regress" and nonempty_test==1:
 		# print(nonempty_test)
-		pred_outsample = rf.predict(df_test[features])
+		pred_outsample = model.predict(df_test[features])
 		y_outsample = df_test[y]
 		outsample_mae = metrics.mean_absolute_error(y_outsample, pred_outsample)
 		outsample_mse = metrics.mean_squared_error(y_outsample, pred_outsample)
@@ -587,18 +618,18 @@ def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_spl
 		Scalar.setValue("e(test_rmse)", outsample_rmse, vtype='visible')
 	
 	if type=="classify" and nonempty_test==1:
-		pred_outsample = rf.predict(df_test[features])
+		pred_outsample = model.predict(df_test[features])
 		y_outsample = df_test[y]
 		outsample_accuracy = metrics.accuracy_score(y_outsample, pred_outsample)
 		Scalar.setValue("e(test_accuracy)", outsample_accuracy, vtype='visible')
 
 	
 	# If applicable, display feature importance
-	feature_importances = DataFrame(rf.feature_importances_,
+	feature_importances = DataFrame(model.feature_importances_,
 										index = features,
 										columns=['importance']).sort_values('importance', ascending=False)
 	z = feature_importances.shape
-	importance = list(rf.feature_importances_)
+	importance = list(model.feature_importances_)
 	Matrix.create("importance", z[0], z[1], -1)
 	Matrix.setColNames("importance",['importance'])
 	Matrix.setRowNames("importance",list(features.values))
@@ -611,7 +642,7 @@ def run_random_forest(type,vars,n_estimators,criterion,max_depth,min_samples_spl
 def get_predictions(vars, prediction):
 
 	# Import random forest object data from main namespace
-	from __main__ import rf_object as rf
+	from __main__ import model_object as model
 	
 	# Load data into Pandas data frame
 	df = DataFrame(Data.get(vars))
@@ -624,7 +655,7 @@ def get_predictions(vars, prediction):
 	features = df.columns[2:]
 	
 	# Generate predictions (on both training and test data)
-	pred    = rf.predict(df[features])
+	pred    = model.predict(df[features])
 	
 	# Export predictions back to Stata
    	Data.addVarFloat(prediction)

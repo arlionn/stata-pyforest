@@ -388,12 +388,19 @@ local os_mae: di %10.4f `e(test_mae)'
 local train_obs_f: di %10.0fc `num_obs_train'
 local test_obs_f: di %10.0fc `num_obs_test'
 
+* xx move me 3: truncate dependent var name
+local yvarlen = length("`yvar'")
+local yvar_fmt = "`yvar'"
+if `yvarlen'>13 {
+	local yvar_fmt = substr("`yvar'",1,13) + "..."
+}
+
 * Display output
 noi di "{hline 80}"
 noi di in ye "Random forest `type_str'"
 noi di " "
 noi di in gr "{ul:Data}"
-noi di in gr "Dependent variable  = " in ye "`yvar'" _continue
+noi di in gr "Dependent variable  = " in ye "`yvar_fmt'" _continue
 noi di in gr _col(41) "Number of training obs   = " in ye `train_obs_f'
 noi di in gr "Number of features  = " in ye `num_features' _continue
 noi di in gr _col(41) "Number of validation obs = " in ye `test_obs_f'
@@ -415,14 +422,14 @@ noi di in gr "{ul:Output}"
 noi di in gr "Prediction: " in ye "`prediction_di'"
 if "`type'"=="regress" {
 	noi di in gr "Training RMSE       = " in ye `is_rmse'
-	noi di in gr "Training MAE        = " in ye `is_mae'
+	*noi di in gr "Training MAE        = " in ye `is_mae'
 }
 if "`type'"=="classify" {
 	noi di in gr "Training accuracy   = " in ye `e(training_accuracy)'
 }
 if "`type'"=="regress" & `nonempty_test'==1 {
 	noi di in gr "Validation RMSE     = " in ye `os_rmse'
-	noi di in gr "Validation MAE      = " in ye `os_mae'
+	*noi di in gr "Validation MAE      = " in ye `os_mae'
 }
 if "`type'"=="classify" & `nonempty_test'==1 {
 	noi di in gr "Validation accuracy = " in ye `e(test_accuracy)'
