@@ -11,7 +11,7 @@ pyforest
 
 Regression and classification with random forests in Stata
 
-`version 0.22 16jan2020`
+`version 0.3 30mar2020`
 
 
 Overview
@@ -39,9 +39,14 @@ Installing pyforest is very simple.
 net install pyforest, from(https://raw.githubusercontent.com/mdroste/stata-pyforest/master/) replace
 ```
 
-If your Stata program can't access the internet (i.e. some server installations) you can copy the .ado and .sthlp files in this repository directly to your adopath (i.e. somewhere in the folders you see when you type the command 'adopath' in Stata). This program will be submitted to the ssc archive very shortly and will be available there soon.
+2. Install Python if you haven't already, and check to make sure Stata can see it with the following Stata command:
+```stata
+python query
+```
 
-2. If necessary, make sure that you have the required Python prerequisites installed by running the included Stata program pyforest_setup:
+If Stata cannot find your Python installation, refer to the [installation guide](docs/installation.md).
+
+3. Make sure that you have the required Python prerequisites installed by running the included Stata program pyforest_setup:
 
 ```stata
 pyforest_setup
@@ -59,11 +64,13 @@ Here is a quick example demonstrating how to use pyforest for classification:
 * Load dataset of flowers
 use http://www.stata-press.com/data/r10/iris.dta, clear
 
-* Training sample: generate indicator variable = 1 if member of training dataset (approx. half dataset randomly drawn), =0 otherwise
+* Mark about half of the observations as our training sample
 generate training_sample = runiform()<0.5
 
 * Run a random forest classification model on the training sample and obtain predictions with post-estimation 'predict' command
 pyforest iris seplen sepwid petlen petwid, type(classify) training(training_sample)
+
+* Generate predictions for iris from the model above
 predict iris_predicted
 
 * We can also use 'if' to specify the training sample, although then pyforest will not give you out-of-sample fit statistics
@@ -79,10 +86,10 @@ Here is a quick example demonstrating how to use pyforest for regression:
 * Load dataset of cars
 sysuse auto, clear
 
-* Training sample: generate indicator variable =1 if foreign==0, =0 otherwise (train on foreign cars)
+* Mark about half of the observations as our training sample (training_sample=1)
 generate training_sample = foreign==0
 
-* Run random forest regression, training with training sample identified abov, esave predictions as price_predicted
+* Run random forest regression, training with training sample identified above, save predictions as price_predicted
 pyforest price mpg trunk weight, type(regress) training(training_sample) prediction(price_predicted)
 ```
 
@@ -101,10 +108,7 @@ Todo
 
 The following items will be addressed soon:
 
-- [ ] Finish off this readme.md and the help file
-- [ ] Proide some benchmarking
 - [ ] Add support for weights
-- [ ] Return some stuff in e()
 - [ ] Post-estimation: feature importance
 - [ ] Model selection: cross-validation
 
