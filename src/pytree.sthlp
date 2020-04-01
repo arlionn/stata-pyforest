@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.25 29mar2020}{...}
+{* *! version 0.27 30mar2020}{...}
 {viewerjumpto "Syntax" "pytree##syntax"}{...}
 {viewerjumpto "Description" "pytree##description"}{...}
 {viewerjumpto "Options" "pytree##options"}{...}
@@ -44,8 +44,6 @@
 
 {synoptline}
 {p 4 6 2}
-{opt aweight}s are allowed;
-see {help weight}.
 {p_end}
  
  
