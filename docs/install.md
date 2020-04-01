@@ -13,9 +13,11 @@ Installation with Anaconda
 
 The easiest way to install the Python prerequisites is to install Anaconda. Anaconda is a distribution of Python that includes all of the necessary prerequisites. You can install Anaconda even if you already have one or more Python installations on your computer.
 
-1. Download the most recent verison of Anaconda with Python 3 from [Anaconda's website[(https://www.anaconda.com/distribution/#download-section).
+1. Download the most recent verison of Anaconda with Python 3 from [Anaconda's website](https://www.anaconda.com/distribution/#download-section).
 
 2. Follow the directions on the installer. Install for 'Just me' rather than 'All users'. *Take note of the install path*. 
+
+![cowsay benchmark](docs/images/fig1.png "install fig1")
 
 3. Close any open Stata windows you might have and open a new one. Type "python query" to see if Stata automatically recognizes your Python installation.
 
