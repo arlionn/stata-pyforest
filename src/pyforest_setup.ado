@@ -40,168 +40,121 @@ if "`python_path'"=="" {
 }
 
 *-------------------------------------------------------------------------------
-* Check to see if we have pip
+* Check for modules
 *-------------------------------------------------------------------------------
 
-di in gr " "
-di in gr "Looking for pip..."
-cap python which `pip'
-if _rc == 0 {
-	di in gr "  Pip was found."
-	local has_pip=1
-}
-if _rc != 0 {
-	di in gr "  Warning: Could not find the module pip."
-	di in gr "  Trying to install now."
-	cd "`c(sysdir_plus)'"
-	copy "https://bootstrap.pypa.io/get-pip.py" get-pip.py, replace
-	shell `python_path' get-pip.py
-	di in gr "  Installed pip. 
-	di in gr "  Please close all instances of Stata to proceed, and then run pyforest_setup again."
-}
+* Start by assuming we have them all
+local has_pandas = 1
+local has_sklearn = 1
+local has_numpy = 1
+local has_sfi = 1
 
-*-------------------------------------------------------------------------------
-* Check to see if we have pandas
-*-------------------------------------------------------------------------------
-
-* Local to hold module name
+* Check for pandas
 local modname pandas
-
-* Check whether or nnot we have Pandas.
 di in gr " "
 di in gr "Looking for Python module `modname'..."
 local installed 0
 cap python which `modname'
 if _rc==0 {
 	di in gr "  The module `modname' was found."
-	local installed 1
 }
 if _rc!=0 {
 	di in gr "  Warning: Could not find the module `modname'. "
+	local has_pandas = 0
 }
-	
-* If we could not find the module...
-if `installed'==0 {
-    
-	* Try to install automatically with pip
-	di in gr "    Trying to install `modname' automatically with pip..."
-	sleep 300
-	python: install_mod("`python_path'","`modname'")
-	
-	* Parse errors
-	if `pf_install'==0 {
-		di as error "  Error: Could not install `modname' automatically. You may need to install it manually."
-		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
-		exit 1
-	}
-}
-	
-*-------------------------------------------------------------------------------
+
 * Check for numpy
-*-------------------------------------------------------------------------------
-
-* Local to hold module name
 local modname numpy
-
-* Check whether or nnot we have Pandas.
 di in gr " "
 di in gr "Looking for Python module `modname'..."
 local installed 0
 cap python which `modname'
 if _rc==0 {
 	di in gr "  The module `modname' was found."
-	local installed 1
 }
 if _rc!=0 {
 	di in gr "  Warning: Could not find the module `modname'. "
-}
-	
-* If we could not find the module...
-if `installed'==0 {
-    
-	* Try to install automatically with pip
-	di in gr "    Trying to install `modname' automatically with pip..."
-	sleep 300
-	python: install_mod("`python_path'","`modname'")
-	
-	* Parse errors
-	if `pf_install'==0 {
-		di as error "  Error: Could not install `modname' automatically. You may need to install it manually."
-		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
-		exit 1
-	}
+	local has_numpy = 0
 }
 
-*-------------------------------------------------------------------------------
-* Check for scikit-learn (sklearn)
-*-------------------------------------------------------------------------------
-
-* Local to hold module name
+* Check for sklearn
 local modname sklearn
-
-* Check whether or nnot we have Pandas.
 di in gr " "
 di in gr "Looking for Python module `modname'..."
 local installed 0
 cap python which `modname'
 if _rc==0 {
 	di in gr "  The module `modname' was found."
-	local installed 1
 }
 if _rc!=0 {
 	di in gr "  Warning: Could not find the module `modname'. "
-}
-	
-* If we could not find the module...
-if `installed'==0 {
-    
-	* Try to install automatically with pip
-	di in gr "    Trying to install `modname' automatically with pip..."
-	sleep 300
-	python: install_mod("`python_path'","`modname'")
-	
-	* Parse errors
-	if `pf_install'==0 {
-		di as error "  Error: Could not install `modname' automatically. You may need to install it manually."
-		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
-		exit 1
-	}
+	local has_sklearn = 0
 }
 
 *-------------------------------------------------------------------------------
-* Check for sfi (stata function interface - should come with stata 16)
+* If we need to install anything...
 *-------------------------------------------------------------------------------
 
-* Local to hold module name
-local modname sfi
-
-* Check whether or nnot we have Pandas.
-di in gr " "
-di in gr "Looking for Python module `modname'..."
-local installed 0
-cap python which `modname'
-if _rc==0 {
-	di in gr "  The module `modname' was found."
-	local installed 1
-}
-if _rc!=0 {
-	di in gr "  Warning: Could not find the module `modname'. "
-}
+* If pandas, numpy, or sklearn not found
+if `has_pandas'==0 | `has_numpy'==0 | `has_sklearn'==0 {
 	
-* If we could not find the module...
-if `installed'==0 {
-    
-	* Try to install automatically with pip
-	di in gr "    Trying to install `modname' automatically with pip..."
-	sleep 300
-	python: install_mod("`python_path'","`modname'")
-	
-	* Parse errors
-	if `pf_install'==0 {
-		di as error "  Error: Could not install `modname' automatically. You may need to install it manually."
-		di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
-		exit 1
+	* Look for pip, install if not found
+	di in gr "We will try to install the modules we couldn't find using pip."
+	di in gr " "
+	di in gr "Looking for pip..."
+	cap python which `pip'
+	if _rc == 0 {
+		di in gr "  Pip was found."
+		local has_pip=1
 	}
+	if _rc != 0 {
+		di in gr "  Warning: Could not find the module pip."
+		di in gr "  Trying to install now."
+		cd "`c(sysdir_plus)'"
+		copy "https://bootstrap.pypa.io/get-pip.py" get-pip.py, replace
+		shell `python_path' get-pip.py
+		di in gr "  Installed pip. 
+	}
+
+	* Try to install pandas if necessary
+	if `has_pandas'==0 {
+		local modname pandas
+		di in gr "    Trying to install `modname' automatically with pip..."
+		sleep 300
+		python: install_mod("`python_path'","`modname'")
+		if `pf_install'==0 {
+			di as error "  Error: Could not install `modname' automatically. You may need to install it manually."
+			di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
+			exit 1
+		}
+	}
+	
+	* Try to install numpy if necessary
+	if `has_numpy'==0 {
+		local modname numpy
+		di in gr "    Trying to install `modname' automatically with pip..."
+		sleep 300
+		python: install_mod("`python_path'","`modname'")
+		if `pf_install'==0 {
+			di as error "  Error: Could not install `modname' automatically. You may need to install it manually."
+			di as error "  Please see the help file ({help pyforest_setup:help pyforest_setup}) for more info."
+			exit 1
+		}
+	}
+
+	* Try to install sklearn if necessary
+	if `has_sklearn'==0 {
+		local modname sklearn
+		di in gr "    Trying to install `modname' automatically with pip..."
+		sleep 300
+		python: install_mod("`python_path'","`modname'")
+		if `pf_install'==0 {
+			di as error "  Error: Could not install `modname' automatically. You may need to install it manually."
+			di as error "  Please see  for more info."
+			exit 1
+		}
+	}
+
 }
 
 *-------------------------------------------------------------------------------
