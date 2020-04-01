@@ -40,6 +40,26 @@ if "`python_path'"=="" {
 }
 
 *-------------------------------------------------------------------------------
+* Check to see if we have pip
+*-------------------------------------------------------------------------------
+
+di in gr " "
+di in gr "Looking for pip..."
+cap python which `pip'
+if _rc == 0 {
+	di in gr "  Pip was found."
+	local has_pip=1
+}
+if _rc != 0 {
+	di in gr "  Warning: Could not find the module pip."
+	di in gr "  Trying to install now."
+	copy "https://bootstrap.pypa.io/get-pip.py" ~/get-pip.py
+	shell `python_path' -m get-pip.py
+	di in gr "  Installed pip. 
+	di in gr "  Please close all instances of Stata to proceed, and then run pyforest_setup again."
+}
+
+*-------------------------------------------------------------------------------
 * Check to see if we have pandas
 *-------------------------------------------------------------------------------
 

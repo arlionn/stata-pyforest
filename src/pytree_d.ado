@@ -26,6 +26,8 @@ def display_tree():
 	
 	# Grab text representation of tree
 	r = export_text(tree, feature_names=(list(features)))
+
+	# XX exception handling for use of predict without previous use of pytree
 	
 	# Display text representation of tree
 	print(r)

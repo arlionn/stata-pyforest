@@ -66,30 +66,45 @@ python:
 
 def post_prediction(vars, prediction):
 
+	# Start with a working flag
+	working = 1
+
 	# Import things from namespace
-	from __main__ import model_object as model
+	try:
+		from __main__ import model_object as model
+	except ImportError:
+		print("Error: Could not find decision tree. Run pytree before using this command.")
+		working = 0
+
 
 	# Load other requisite libraries
-	from pandas import DataFrame
-	from sklearn.tree import DecisionTreeClassifier,DecisionTreeRegressor
-	from sfi import Data,Matrix
+	try:
+		from pandas import DataFrame
+		from sklearn.tree import DecisionTreeClassifier,DecisionTreeRegressor
+		from sfi import Data,Matrix
+	except ImportError:
+		print("Error: Could not load pandas or scikit-learn.")
+		working = 0
 	
-	# Load data into Pandas data frame
-	df = DataFrame(Data.get(vars))
-	colnames = []
-	for var in vars.split():
-		 colnames.append(var)
-	df.columns = colnames
+	# If working flag hasnt been set to zero, continue with prediction
+	if working==1:
+
+		# Load data into Pandas data frame
+		df = DataFrame(Data.get(vars))
+		colnames = []
+		for var in vars.split():
+			colnames.append(var)
+		df.columns = colnames
 	
-	# Create list of feature names
-	features = df.columns[0:]
+		# Create list of feature names
+		features = df.columns[0:]
 	
-	# Generate predictions (on both training and test data)
-	pred    = model.predict(df[features])
+		# Generate predictions (on both training and test data)
+		pred    = model.predict(df[features])
 	
-	# Export predictions back to Stata
-   	Data.addVarFloat(prediction)
-	Data.store(prediction,None,pred)
+		# Export predictions back to Stata
+   		Data.addVarFloat(prediction)
+		Data.store(prediction,None,pred)
 	
 	
 end

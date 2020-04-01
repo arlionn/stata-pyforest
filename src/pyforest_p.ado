@@ -8,7 +8,7 @@
 
 program define pyforest_p, eclass
 	version 16.0
-	syntax anything(id="argument name" name=arg) [if] [in], [pr]
+	syntax anything(id="argument name" name=arg) [if] [in], [pr xb]
 	
 	* Mark sample with if/in
 	marksample touse, novarlist
@@ -67,28 +67,43 @@ python:
 
 def post_prediction(vars, prediction):
 
-	# Import random forest object data from main namespace
-	from __main__ import rf_object as rf
-	from pandas import DataFrame
-	from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
-	from sfi import Data,Matrix
+	# Start with a working flag
+	working = 1
+
+	# Import model from Python namespace
+	try:
+		from __main__ import rf_object as model
+	except ImportError:
+		print("Error: Could not find random forest. Run pyforest before using this command.")
+		working = 0
+
+	# Load other requisite libraries
+	try:
+		from pandas import DataFrame
+		from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
+		from sfi import Data,Matrix
+	except ImportError:
+		print("Error: Could not load pandas or scikit-learn.")
+		working = 0
+
+	# If working flag hasnt been set to zero, continue with prediction
+	if working==1:
+
+		# Load data into Pandas data frame
+		df = DataFrame(Data.get(vars))
+		colnames = []
+		for var in vars.split():
+			colnames.append(var)
+		df.columns = colnames
 	
-	# Load data into Pandas data frame
-	df = DataFrame(Data.get(vars))
-	colnames = []
-	for var in vars.split():
-		 colnames.append(var)
-	df.columns = colnames
+		# Create list of feature names
+		features = df.columns[0:]
 	
-	# Create list of feature names
-	features = df.columns[0:]
+		# Generate predictions (on both training and test data)
+		pred    = model.predict(df[features])
 	
-	# Generate predictions (on both training and test data)
-	pred    = rf.predict(df[features])
-	
-	# Export predictions back to Stata
-   	Data.addVarFloat(prediction)
-	Data.store(prediction,None,pred)
-	
+		# Export predictions back to Stata
+   		Data.addVarFloat(prediction)
+		Data.store(prediction,None,pred)
 	
 end
