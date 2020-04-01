@@ -80,14 +80,14 @@ if _rc!=0 {
 * Check for sklearn
 local modname sklearn
 di in gr " "
-di in gr "Looking for Python module `modname'..."
+di in gr "Looking for Python module scikit-learn..."
 local installed 0
-cap python which `modname'
+cap python which sklearn
 if _rc==0 {
-	di in gr "  The module `modname' was found."
+	di in gr "  The module scikit-learn was found."
 }
 if _rc!=0 {
-	di in gr "  Warning: Could not find the module `modname'. "
+	di in gr "  Warning: Could not find the module scikit-learn. "
 	local has_sklearn = 0
 }
 
@@ -128,7 +128,7 @@ if `has_pandas'==0 | `has_numpy'==0 | `has_sklearn'==0 {
 			exit 1
 		}
 	}
-	
+
 	* Try to install numpy if necessary
 	if `has_numpy'==0 {
 		local modname numpy
@@ -144,7 +144,7 @@ if `has_pandas'==0 | `has_numpy'==0 | `has_sklearn'==0 {
 
 	* Try to install sklearn if necessary
 	if `has_sklearn'==0 {
-		local modname sklearn
+		local modname scikit-learn
 		di in gr "    Trying to install `modname' automatically with pip..."
 		sleep 300
 		python: install_mod("`python_path'","`modname'")
