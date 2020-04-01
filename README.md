@@ -44,7 +44,7 @@ net install pyforest, from(https://raw.githubusercontent.com/mdroste/stata-pyfor
 python query
 ```
 
-If Stata cannot find your Python installation, refer to the [installation guide](docs/installation.md).
+If Stata cannot find your Python installation, refer to the [installation guide](docs/install.md).
 
 3. Make sure that you have the required Python prerequisites installed by running the included Stata program pyforest_setup:
 
