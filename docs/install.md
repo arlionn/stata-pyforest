@@ -64,3 +64,10 @@ set python_exec "/Users/(username)/opt/anaconda3/bin/python3", perm
 Once you've typed that once, you don't need to do it again - Stata will remember this path from now on.
 
 If you're on a Mac and not sure where Anaconda installed, simply run the installer again - it will eventually throw an error telling you the path of the installation, which you can use in the "set python_exec" command above.
+
+
+
+Problems with Anaconda on Mac
+---------------------------------
+
+A small number of Mac users are encountering issues with Anaconda. Sometimes, running pyforest/pytree leads a large stream of errors relating to importing libraries. This is a (bug)[] in Stata with Anaconda that seems to be difficult to fix. Instead, you should download the most recent version of Python from the official website (click here)[https://www.python.org/downloads/] and then follow the instructions 3-5 above, taking care to set your python path in step (4) to the location of this version of Python, and then running pyforest_setup.
