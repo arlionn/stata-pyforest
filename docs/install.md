@@ -24,7 +24,7 @@ net install pyforest, from(https://raw.githubusercontent.com/mdroste/stata-pyfor
 
 2. Download the most recent verison of Anaconda with Python 3 from [Anaconda's website](https://www.anaconda.com/distribution/#download-section).
    Follow the directions on the installer. Install for 'Just me' rather than 'All users'. 
-   *Take note of the install path, as shown in the figure below.*
+   *If you're on Windows, take note of the install path, as shown in the figure below.*
    *If prompted, choose to make Anaconda your computer's "default" installation of Python*.
 
 <p align="center"><img src="https://raw.githubusercontent.com/mdroste/stata-pyforest/master/docs/images/fig1.png"></p>
@@ -33,9 +33,13 @@ net install pyforest, from(https://raw.githubusercontent.com/mdroste/stata-pyfor
 
 <p align="center"><img src="https://raw.githubusercontent.com/mdroste/stata-pyforest/master/docs/images/fig2.png"></p>
 
-4. If your Stata window looks like the screenshot above, with a file path that includes the word Anaconda, then proceed to step 5. Otherwise, you will need to tell Stata where your Anaconda installation is with the "set python_exec" option. If you are on a Mac, refer to the "Common Issue with Mac Installations" below. If you are on Windows, make sure to write down the path (you can open the Anaconda installer again if you forgot it) Anaconda installed to, and then use python_exec like so:
+4. If your Stata window looks like the screenshot above, with a file path that includes the word Anaconda, then proceed to step 5. Otherwise, you will need to tell Stata where your Anaconda installation is with the "set python_exec" option. If you are on a Mac, refer to the "Common Issue with Mac Installations" below. 
+
+If you are on Windows, make sure to write down the path (you can open the Anaconda installer again if you forgot it) Anaconda installed to, and then use python_exec like so:
 
 <p align="center"><img src="https://raw.githubusercontent.com/mdroste/stata-pyforest/master/docs/images/fig2b.png"></p>
+
+If you are on Mac, the same thing applies, except the our path will be of the form (some directory here)/anaconda3/bin/python3. For more on this, see the section "Note for Mac Installations" below.
 
 5. Run the program pyforest_setup to make sure you have all the prerequisite Python libraries. By default, these all come with Anaconda.
 
@@ -49,10 +53,10 @@ Installation with Existing Python Installation
 If you already have Python installed, it should be straightforward to get running - follow the same guide as above, but starting from step 3.
 
 
-A Common Issue with Mac Installations
+Note for Mac Installations
 ---------------------------------
 
-Some versions of Mac OSX seems to install Anaconda to a path like "/Users/(username)/opt/anaconda3". Stata will not be able to recognize this path in step 4. Fortunately, there is an easy fix! Simply type the following into the Stata terminal:
+Some (but not all) versions of Mac OSX install Anaconda to a path like "/Users/(username)/opt/anaconda3". Stata will not be able to recognize this path automatically in step 3. Fortunately, there is an easy fix! Simply type the following into the Stata terminal:
 ```stata
 set python_exec "/Users/(username)/opt/anaconda3/bin/python3", perm
 ```
