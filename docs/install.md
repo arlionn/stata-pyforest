@@ -50,7 +50,26 @@ Mac: Installation with Python
 
 There are a few compatibility issues with some versions of Mac OSX and Anaconda, the Python distribution we recommend for Windows (see 'Problems with Anaconda on Mac' below). 
 
-Therefore, if you are on a Mac, I recommend you download the most recent official release of Python from [this link](https://www.python.org/downloads/). Note the installation path when you go through the installer. Then follow steps 1, 3, 4, and 5 as outlined above in the Windows installation, making sure that the version of Python used by Stata matches the location of this Python installation.
+Therefore, if you are on a Mac, we recommend the following steps:
+
+1. Download the Stata component of pyforest by typing the following Stata command into the Stata window:
+
+```stata
+net install pyforest, from(https://raw.githubusercontent.com/mdroste/stata-pyforest/master/) replace
+```
+
+2. Download the most recent official release of Python from [this link](https://www.python.org/downloads/). Follow the default options on the installer. 
+
+3. Close any open Stata windows you might have, and then open a new one. Type the following into the Stata terminal:
+
+```stata
+set python_exec "/Library/Frameworks/Python.framework/Versions/3.8/bin/python3.8", perm
+```
+
+Note that this is a different path than what is used in Windows or with Anaconda.
+
+4. Run the program pyforest_setup to make sure you have all the prerequisite Python libraries. 
+
 
 Installation with Existing Python Installation
 ---------------------------------
