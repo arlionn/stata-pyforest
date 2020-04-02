@@ -50,7 +50,7 @@ Mac: Installation with Python
 
 There are a few compatibility issues with some versions of Mac OSX and Anaconda, the Python distribution we recommend for Windows (see 'Problems with Anaconda on Mac' below). 
 
-Therefore, if you are on a Mac, I recommend you download the most recent official release of Python from (this link)[https://www.python.org/downloads/]. Note the installation path when you go through the installer. Then follow steps 1, 3, 4, and 5 as outlined above in the Windows installation, making sure that the version of Python used by Stata matches the location of this Python installation.
+Therefore, if you are on a Mac, I recommend you download the most recent official release of Python from [this link](https://www.python.org/downloads/). Note the installation path when you go through the installer. Then follow steps 1, 3, 4, and 5 as outlined above in the Windows installation, making sure that the version of Python used by Stata matches the location of this Python installation.
 
 Installation with Existing Python Installation
 ---------------------------------
@@ -75,4 +75,4 @@ If you're on a Mac and not sure where Anaconda installed, simply run the install
 Problems with Anaconda on Mac
 ---------------------------------
 
-A small number of Mac users are encountering issues with Anaconda. Sometimes, running pyforest/pytree leads a large stream of errors relating to importing libraries. This is a (bug)[https://www.statalist.org/forums/forum/general-stata-discussion/general/1537891-failure-of-anaconda-miniconda-python-in-stata-16-1-for-macos] in Stata with Anaconda that seems to be difficult to fix. Instead, you should download the most recent version of Python from the official website (click here)[https://www.python.org/downloads/] and then follow the instructions 3-5 above, taking care to set your python path in step (4) to the location of this version of Python, and then running pyforest_setup.
+A small number of Mac users are encountering issues with Anaconda. Sometimes, running pyforest/pytree leads a large stream of errors relating to importing libraries. This is a [bug](https://www.statalist.org/forums/forum/general-stata-discussion/general/1537891-failure-of-anaconda-miniconda-python-in-stata-16-1-for-macos) in Stata with Anaconda that seems to be difficult to fix. Instead, you should download the most recent version of Python from the official website [click here](https://www.python.org/downloads/) and then follow the instructions 3-5 above, taking care to set your python path in step (4) to the location of this version of Python, and then running pyforest_setup.
