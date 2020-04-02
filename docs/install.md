@@ -12,7 +12,7 @@ The easiest way to install the Python prerequisites is to install Anaconda. Anac
 Alternatively, you can use any Python installation if you have scikit-learn and pandas installed.
 
 
-Installation with Anaconda
+Windows: Installation with Anaconda
 ---------------------------------
 
 
@@ -45,7 +45,12 @@ If you are on Mac, the path to your Anaconda installation will look a bit differ
 
 <p align="center"><img src="https://raw.githubusercontent.com/mdroste/stata-pyforest/master/docs/images/fig4.png"></p>
 
+Mac: Installation with Python
+---------------------------------
 
+There are a few compatibility issues with some versions of Mac OSX and Anaconda, the Python distribution we recommend for Windows (see 'Problems with Anaconda on Mac' below). 
+
+Therefore, if you are on a Mac, I recommend you download the most recent official release of Python from (this link)[https://www.python.org/downloads/]. Note the installation path when you go through the installer. Then follow steps 1, 3, 4, and 5 as outlined above in the Windows installation, making sure that the version of Python used by Stata matches the location of this Python installation.
 
 Installation with Existing Python Installation
 ---------------------------------
@@ -53,7 +58,7 @@ Installation with Existing Python Installation
 If you already have Python installed, it should be straightforward to get running - follow the same guide as above, but starting from step 3.
 
 
-Note for Mac Installations
+Note for Mac Installations with Anaconda
 ---------------------------------
 
 Some (but not all) versions of Mac OSX install Anaconda to a path like "/Users/(username)/opt/anaconda3". Stata will not be able to recognize this path automatically in step 3. Fortunately, there is an easy fix! Simply type the following into the Stata terminal:
@@ -70,4 +75,4 @@ If you're on a Mac and not sure where Anaconda installed, simply run the install
 Problems with Anaconda on Mac
 ---------------------------------
 
-A small number of Mac users are encountering issues with Anaconda. Sometimes, running pyforest/pytree leads a large stream of errors relating to importing libraries. This is a (bug)[] in Stata with Anaconda that seems to be difficult to fix. Instead, you should download the most recent version of Python from the official website (click here)[https://www.python.org/downloads/] and then follow the instructions 3-5 above, taking care to set your python path in step (4) to the location of this version of Python, and then running pyforest_setup.
+A small number of Mac users are encountering issues with Anaconda. Sometimes, running pyforest/pytree leads a large stream of errors relating to importing libraries. This is a (bug)[https://www.statalist.org/forums/forum/general-stata-discussion/general/1537891-failure-of-anaconda-miniconda-python-in-stata-16-1-for-macos] in Stata with Anaconda that seems to be difficult to fix. Instead, you should download the most recent version of Python from the official website (click here)[https://www.python.org/downloads/] and then follow the instructions 3-5 above, taking care to set your python path in step (4) to the location of this version of Python, and then running pyforest_setup.
