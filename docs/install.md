@@ -39,7 +39,7 @@ If you are on Windows, make sure to write down the path (you can open the Anacon
 
 <p align="center"><img src="https://raw.githubusercontent.com/mdroste/stata-pyforest/master/docs/images/fig2b.png"></p>
 
-If you are on Mac, the same thing applies, except the our path will be of the form (some directory here)/anaconda3/bin/python3. For more on this, see the section "Note for Mac Installations" below.
+If you are on Mac, the path to your Anaconda installation will look a bit different from the Windows path above. It will be of the form (some directory here)/anaconda3/bin/python3. For more on this, see the section "Note for Mac Installations" below.
 
 5. Run the program pyforest_setup to make sure you have all the prerequisite Python libraries. By default, these all come with Anaconda.
 
