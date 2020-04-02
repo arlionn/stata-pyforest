@@ -33,7 +33,7 @@ net install pyforest, from(https://raw.githubusercontent.com/mdroste/stata-pyfor
 
 <p align="center"><img src="https://raw.githubusercontent.com/mdroste/stata-pyforest/master/docs/images/fig2.png"></p>
 
-4. If your Stata window looks like the screenshot above, with a file path that includes the word Anaconda, then proceed to step 5. Otherwise, you will need to tell Stata where your Anaconda installation is with the "set python_exec" option. If you are on a Mac, refer to the "Frequently Asked Questions" below.
+4. If your Stata window looks like the screenshot above, with a file path that includes the word Anaconda, then proceed to step 5. Otherwise, you will need to tell Stata where your Anaconda installation is with the "set python_exec" option. If you are on a Mac, refer to the "Common Issue with Mac Installations" below. If you are on Windows, make sure to write down the path (you can open the Anaconda installer again if you forgot it) Anaconda installed to, and then use python_exec like so:
 
 <p align="center"><img src="https://raw.githubusercontent.com/mdroste/stata-pyforest/master/docs/images/fig2b.png"></p>
 
