@@ -52,9 +52,11 @@ If you already have Python installed, it should be straightforward to get runnin
 A Common Issue with Mac Installations
 ---------------------------------
 
-Some versions of Macs seem to install Anaconda to a path like "/Users/(username)/opt/anaconda3". Stata will not be able to recognize this path in step 4. Fortunately there is an easy fix. Simply type the following into Stata:
+Some versions of Mac OSX seems to install Anaconda to a path like "/Users/(username)/opt/anaconda3". Stata will not be able to recognize this path in step 4. Fortunately, there is an easy fix! Simply type the following into the Stata terminal:
 ```stata
 set python_exec "/Users/(username)/opt/anaconda3/bin/python3", perm
 ```
 
 Once you've typed that once, you don't need to do it again - Stata will remember this path from now on.
+
+If you're on a Mac and not sure where Anaconda installed, simply run the installer again - it will eventually throw an error telling you the path of the installation, which you can use in the "set python_exec" command above.
